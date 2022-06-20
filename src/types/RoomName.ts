@@ -1,0 +1,1 @@
+export type RoomName = string;
