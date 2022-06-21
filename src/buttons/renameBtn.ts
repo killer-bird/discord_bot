@@ -3,9 +3,10 @@ import { Room } from "../database/models/RoomModel"
 import { IRoom } from "../interfaces/IRoom"
 import { RoomName } from "../types/RoomName"
 import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
-import { getNotHaveTimeEmbed } from "../utills/getNotHaveTimeEmbed"
-import { privateRoomConfig } from "../config"
-import { userResponseHandler } from "../utills/interactionUserResponseHandler"
+import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
+import { getErrEmbed } from "../utills/getErrEmbed"
+
+
 
 const setName = async (room: VoiceChannel, name: RoomName) :Promise<void> => {
     await room.edit({name: name})
@@ -21,13 +22,13 @@ export const renameBtn = new MessageButton()
 export const execute = async (interaction: CommandInteraction): Promise<void> => {   
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: member.voice.channelId}) as IRoom
-    
-    if( room?.owner === interaction.user.id ) {
 
-        await interaction.reply({embeds:[getAwaitMsgEmbed("установить новое название для комнаты")]})
+    if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
+
+        await interaction.reply({embeds:[getAwaitMsgEmbed("установить новое название для комнаты (Введите 0, для того чтобы вернуть название по умолчанию)")]})
         
         const awaitMsgTimeout = setTimeout(async() => {
-            await interaction.editReply({embeds:[getNotHaveTimeEmbed()]})
+            await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
             setTimeout(async() => {
                 await interaction.deleteReply() 
             }, 3000);
@@ -37,15 +38,28 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
         try {
             const response = await interaction.channel?.awaitMessages({filter: () => true, max: 1, time: 15000})
             if (response) {
-                await setName(privateRoomConfig.voiceChannel as VoiceChannel, response.first()?.content as RoomName )
+                if( response.first()?.content === '0' ) {
+                    await setName(member.voice.channel as VoiceChannel, member.user.username as RoomName )
+                    clearTimeout(awaitMsgTimeout)
+                    await interaction.deleteReply()
+                    return
+                }
+                await setName(member.voice.channel as VoiceChannel, response.first()?.content as RoomName )
                 clearTimeout(awaitMsgTimeout)
                 await interaction.deleteReply()
             }
         } catch (error) {
             console.log(error)
+            await interaction.reply({embeds: [getErrEmbed("Произошла ошибка. Попробуйте еще раз")]})
+            setTimeout( async () => {
+                await interaction.deleteReply()
+            }, 5000);
             return
         }
     } else {
-        console.log("НЕТ ВЛАСТИ В ЭТОЙ КОМНАТЕ")
+        await interaction.reply({embeds: [getErrEmbed("В этой комнате у вас нет таких полномочий")]})
+        setTimeout( async () => {
+            await interaction.deleteReply()
+        }, 5000);
     }
 }

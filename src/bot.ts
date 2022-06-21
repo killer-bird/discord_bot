@@ -22,8 +22,6 @@ client.on("voiceStateUpdate", async (oldState: VoiceState, newState: VoiceState)
 
 
 
-
-
 client.on("interactionCreate", async (interaction) => {
     if(interaction.isCommand()) {
         const { commandName } = interaction

@@ -14,10 +14,12 @@ const discord_js_1 = require("discord.js");
 const RoomModel_1 = require("../database/models/RoomModel");
 const getAwaitMsgEmbed_1 = require("../utills/getAwaitMsgEmbed");
 const getNotHaveTimeEmbed_1 = require("../utills/getNotHaveTimeEmbed");
-const config_1 = require("../config");
+const getErrEmbed_1 = require("../utills/getErrEmbed");
+const checkPerms_1 = require("../utills/checkPerms");
 const setLimit = (room, limit) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(limit);
     if (limit === 0) {
-        yield room.edit({ userLimit: undefined });
+        yield room.edit({ userLimit: 0 });
         yield RoomModel_1.Room.updateOne({ id: room.id }, { limit: undefined });
         return;
     }
@@ -31,10 +33,10 @@ exports.limitBtn = new discord_js_1.MessageButton()
 exports.data = new discord_js_1.MessageActionRow()
     .addComponents(exports.limitBtn);
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
-    if ((room === null || room === void 0 ? void 0 : room.owner) === interaction.user.id) {
+    if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         yield interaction.reply({ embeds: [(0, getAwaitMsgEmbed_1.getAwaitMsgEmbed)("установить лимит пользователей для комнаты (если вы хотите сделать комнату безлимитной то введите **0**)")] });
         const awaitMsgTimeout = setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.editReply({ embeds: [(0, getNotHaveTimeEmbed_1.getNotHaveTimeEmbed)()] });
@@ -43,26 +45,37 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             }), 3000);
         }), 15000);
         const filter = (m) => {
-            console.log(m.content, 15215152125);
             return true;
         };
         try {
             const response = yield ((_a = interaction.channel) === null || _a === void 0 ? void 0 : _a.awaitMessages({ filter, max: 1, time: 15000 }));
             if (response) {
-                if (!!Number((_b = response.first()) === null || _b === void 0 ? void 0 : _b.content)) {
-                    yield setLimit(config_1.privateRoomConfig.voiceChannel, Number((_c = response.first()) === null || _c === void 0 ? void 0 : _c.content));
+                if (!isNaN(Number((_b = response.first()) === null || _b === void 0 ? void 0 : _b.content))) {
+                    console.log((_c = response.first()) === null || _c === void 0 ? void 0 : _c.content);
+                    yield setLimit(member.voice.channel, Number((_d = response.first()) === null || _d === void 0 ? void 0 : _d.content));
                     clearTimeout(awaitMsgTimeout);
                     yield interaction.deleteReply();
+                    return;
                 }
+                yield interaction.reply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("Введите корректный лимит")] });
+                setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                    yield interaction.deleteReply();
+                }), 5000);
             }
         }
         catch (error) {
-            console.log(error);
+            yield interaction.reply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
+            setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                yield interaction.deleteReply();
+            }), 5000);
             return;
         }
     }
     else {
-        console.log("НЕТ ВЛАСТИ В ЭТОЙ КОМНАТЕ");
+        yield interaction.reply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("В этой комнате у вас не полномочий")] });
+        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+            yield interaction.deleteReply();
+        }), 5000);
     }
 });
 exports.execute = execute;

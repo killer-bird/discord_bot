@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.lockBtn = void 0;
 const discord_js_1 = require("discord.js");
 const RoomModel_1 = require("../database/models/RoomModel");
+const checkPerms_1 = require("../utills/checkPerms");
+const getErrEmbed_1 = require("../utills/getErrEmbed");
 const getlockRoomEmbed = () => {
     const lockRoomEmbed = new discord_js_1.MessageEmbed();
     lockRoomEmbed.setTitle("Вы закрыли комнату")
@@ -26,9 +28,15 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
-    if ((room === null || room === void 0 ? void 0 : room.owner) === interaction.user.id) {
+    if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         (_a = member.voice.channel) === null || _a === void 0 ? void 0 : _a.permissionOverwrites.create(member.voice.channel.guild.roles.everyone, { "CONNECT": false });
         yield interaction.reply({ embeds: [getlockRoomEmbed()] });
+        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+            yield interaction.deleteReply();
+        }), 5000);
+    }
+    else {
+        yield interaction.reply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("В этой комнате у вас не полномочий")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
         }), 5000);

@@ -1,6 +1,8 @@
 import { MessageButton, CommandInteraction, GuildMember, MessageEmbed } from "discord.js"
 import { Room } from "../database/models/RoomModel"
 import { IRoom } from "../interfaces/IRoom"
+import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
+import { getErrEmbed } from "../utills/getErrEmbed"
 
 const getlockRoomEmbed = () : MessageEmbed => {
     const lockRoomEmbed = new MessageEmbed()
@@ -19,9 +21,14 @@ export const execute = async(interaction: CommandInteraction) : Promise<void> =>
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: member.voice.channelId}) as IRoom
 
-    if( room?.owner === interaction.user.id ) {
+    if(checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"CONNECT": false})
         await interaction.reply({embeds: [getlockRoomEmbed()]})
+        setTimeout( async () => {
+            await interaction.deleteReply()
+        }, 5000);
+    } else {
+        await interaction.reply({embeds: [getErrEmbed("В этой комнате у вас не полномочий")]})
         setTimeout( async () => {
             await interaction.deleteReply()
         }, 5000);
