@@ -9,10 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execute = exports.data = void 0;
 const builders_1 = require("@discordjs/builders");
 const incOrDecrCurrency_1 = require("../utills/incOrDecrCurrency");
-exports.data = new builders_1.SlashCommandBuilder()
+const data = new builders_1.SlashCommandBuilder()
     .setName("add")
     .setDescription("addCurrency")
     .addIntegerOption(option => (option.setName("count")
@@ -37,4 +36,7 @@ function execute(interaction) {
         return interaction.reply("SET");
     });
 }
-exports.execute = execute;
+exports.default = {
+    data,
+    execute
+};

@@ -1,18 +1,17 @@
 import { Client, TextChannel } from "discord.js"
+import ExtendedClient from "../Client"
+import { IEvent } from "../interfaces/IEvents"
 import { User } from "../database/models/UserModel"
 import { createUser } from "../utills/createUser"
 import { newRoom } from "../utills/newRoom"
-import { privateRoomConfig } from "../config"
 import { createRoomSettingsMsg } from "../utills/createRoomSettingsMsg"
-export const onReady = async (client: Client) => {
 
-    privateRoomConfig.categoryChannel = await client.channels.fetch(process.env.PARENT_CATEGORY as string)
+const onReady = async (client: ExtendedClient) => {
     const roomSettingsChannel = await client.channels.fetch(process.env.ROOM_SETTINGS as string) as TextChannel
     if(!Array.from(await roomSettingsChannel.messages.fetch()).length) {
         await createRoomSettingsMsg(roomSettingsChannel)
     }
     
-
     const guild = client.guilds.cache.get(process.env.GUILD_ID as string)
     const members = await guild?.members.fetch()
 
@@ -22,5 +21,11 @@ export const onReady = async (client: Client) => {
             await newRoom(member)       
         }
     }) 
+    console.log(client.commands)
     console.log("on ready!")
 }
+
+export default {
+    name: "ready",
+    run: onReady,
+} as IEvent

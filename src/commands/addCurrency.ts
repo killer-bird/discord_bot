@@ -1,8 +1,9 @@
 import {SlashCommandBuilder} from "@discordjs/builders"
 import { CommandInteraction, User } from "discord.js"
 import { incOrDecrCurrency } from "../utills/incOrDecrCurrency"
+import { ICommand } from "../interfaces/ICommand"
 
-export const data = new SlashCommandBuilder()
+const data = new SlashCommandBuilder()
     .setName("add")
     .setDescription("addCurrency")
     .addIntegerOption(option=> (
@@ -16,7 +17,7 @@ export const data = new SlashCommandBuilder()
     })
     
 
-export async function execute(interaction: CommandInteraction) {
+async function execute(interaction: CommandInteraction) {
     const author = interaction.member?.user as User
     const count =  interaction.options.getInteger("count") as number
     const user = interaction.options.getUser("user")
@@ -29,3 +30,8 @@ export async function execute(interaction: CommandInteraction) {
     
     return interaction.reply("SET")
 }
+
+export default {
+    data,
+    execute
+} as ICommand

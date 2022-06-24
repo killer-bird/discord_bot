@@ -2,6 +2,7 @@ import {SlashCommandBuilder} from "@discordjs/builders"
 import { CommandInteraction, User } from "discord.js"
 import { User as UserModel } from "../database/models/UserModel"
 import { getNotificationEmbed } from '../utills/getNotificationEmbed'
+import { ICommand } from "../interfaces/ICommand"
 
 
 const setCurrency = async (target: User, count: number) : Promise<void> => {
@@ -38,3 +39,8 @@ export async function execute(interaction: CommandInteraction) {
     
     return await interaction.reply({content: `Установил ${count} ${user ? user : ''}`, ephemeral: true})
 }
+
+export default {
+    data,
+    execute
+} as ICommand

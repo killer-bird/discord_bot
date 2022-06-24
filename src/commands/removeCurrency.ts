@@ -1,6 +1,7 @@
 import {SlashCommandBuilder} from "@discordjs/builders"
 import { CommandInteraction, User } from "discord.js"
 import { incOrDecrCurrency } from "../utills/incOrDecrCurrency"
+import { ICommand } from "../interfaces/ICommand"
 
 
 export const data = new SlashCommandBuilder()
@@ -30,3 +31,8 @@ export async function execute(interaction: CommandInteraction) {
     
     return interaction.reply("SET")
 }
+
+export default {
+    data,
+    execute
+} as ICommand

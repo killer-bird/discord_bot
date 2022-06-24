@@ -9,13 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.guildMemberAdd = void 0;
 const UserModel_1 = require("../database/models/UserModel");
 const createUser_1 = require("../utills/createUser");
 const newRoom_1 = require("../utills/newRoom");
 const guildMemberAdd = (member) => __awaiter(void 0, void 0, void 0, function* () {
     const oldUser = yield UserModel_1.User.findOne({ id: member.user.id });
-    // await sendCaptcha(member.user)
     if (oldUser) {
         console.log(member.user, "exist!!");
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,4 +45,7 @@ const guildMemberAdd = (member) => __awaiter(void 0, void 0, void 0, function* (
         yield (0, newRoom_1.newRoom)(member);
     }
 });
-exports.guildMemberAdd = guildMemberAdd;
+exports.default = {
+    name: 'guildMemberAdd',
+    run: guildMemberAdd
+};

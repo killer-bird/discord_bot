@@ -38,3 +38,7 @@ function execute(interaction) {
     });
 }
 exports.execute = execute;
+exports.default = {
+    data: exports.data,
+    execute
+};

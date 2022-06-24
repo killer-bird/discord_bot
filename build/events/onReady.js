@@ -9,14 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onReady = void 0;
 const UserModel_1 = require("../database/models/UserModel");
 const createUser_1 = require("../utills/createUser");
 const newRoom_1 = require("../utills/newRoom");
-const config_1 = require("../config");
 const createRoomSettingsMsg_1 = require("../utills/createRoomSettingsMsg");
 const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
-    config_1.privateRoomConfig.categoryChannel = yield client.channels.fetch(process.env.PARENT_CATEGORY);
     const roomSettingsChannel = yield client.channels.fetch(process.env.ROOM_SETTINGS);
     if (!Array.from(yield roomSettingsChannel.messages.fetch()).length) {
         yield (0, createRoomSettingsMsg_1.createRoomSettingsMsg)(roomSettingsChannel);
@@ -29,6 +26,10 @@ const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
             yield (0, newRoom_1.newRoom)(member);
         }
     }));
+    console.log(client.commands);
     console.log("on ready!");
 });
-exports.onReady = onReady;
+exports.default = {
+    name: "ready",
+    run: onReady,
+};

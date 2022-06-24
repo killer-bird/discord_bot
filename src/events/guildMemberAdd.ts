@@ -2,12 +2,13 @@ import { GuildMember, RoleResolvable } from "discord.js"
 import { User } from "../database/models/UserModel"
 import { createUser } from "../utills/createUser"
 import { newRoom } from "../utills/newRoom"
+import { IEvent } from "../interfaces/IEvents"
 
-export const guildMemberAdd = async (member: GuildMember) => {
+
+
+const guildMemberAdd = async (member: GuildMember) => {
 
     const oldUser = await User.findOne({id: member.user.id})
-    
-    // await sendCaptcha(member.user)
     if( oldUser ) {
         console.log( member.user, "exist!!")
         setTimeout( async() => {
@@ -36,3 +37,8 @@ export const guildMemberAdd = async (member: GuildMember) => {
         await newRoom(member)
     }
 }
+
+export default {
+    name: 'guildMemberAdd',
+    run: guildMemberAdd
+} as IEvent

@@ -9,13 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execute = exports.data = void 0;
 const builders_1 = require("@discordjs/builders");
 const UserModel_1 = require("../database/models/UserModel");
 const incOrDecrCurrency_1 = require("../utills/incOrDecrCurrency");
 const isUserExist_1 = require("../utills/isUserExist");
 const getNotExistsEmbed_1 = require("../utills/getNotExistsEmbed");
-exports.data = new builders_1.SlashCommandBuilder()
+const data = new builders_1.SlashCommandBuilder()
     .setName("give")
     .setDescription("giveCurrency")
     .addIntegerOption(option => (option.setName("count")
@@ -48,4 +47,7 @@ function execute(interaction) {
         return interaction.reply("GIVE");
     });
 }
-exports.execute = execute;
+exports.default = {
+    data,
+    execute
+};

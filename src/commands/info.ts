@@ -3,6 +3,7 @@ import { CommandInteraction, MessageEmbed, User } from "discord.js"
 import { User as UserModel } from "../database/models/UserModel"
 import { isUserExist } from '../utills/isUserExist'
 import { getNotExistEmbed } from "../utills/getNotExistsEmbed"
+import { ICommand } from "../interfaces/ICommand"
 
 const getInfoEmbed = async (target: User) :Promise<MessageEmbed> => { 
     
@@ -17,7 +18,7 @@ const getInfoEmbed = async (target: User) :Promise<MessageEmbed> => {
     return infoEmbed
 }
 
-export const data = new SlashCommandBuilder()
+const data = new SlashCommandBuilder()
         .setName("info")
         .setDescription("get info")
         .addUserOption(option => (
@@ -27,7 +28,7 @@ export const data = new SlashCommandBuilder()
         
 
 
-export async function execute(interaction: CommandInteraction) {
+async function execute(interaction: CommandInteraction) {
     const user = interaction.options.getUser("user")
     const author = interaction.member?.user as User
     await interaction.deferReply()
@@ -47,4 +48,8 @@ export async function execute(interaction: CommandInteraction) {
     
 }
 
+export default {
+    data,
+    execute
+} as ICommand
  

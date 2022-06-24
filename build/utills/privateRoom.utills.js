@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteRoom = exports.createRoom = void 0;
-const config_1 = require("../config");
 const RoomModel_1 = require("../database/models/RoomModel");
-const createRoom = (user, guild, roomConfig) => __awaiter(void 0, void 0, void 0, function* () {
+const createRoom = (user, guild) => __awaiter(void 0, void 0, void 0, function* () {
     const room = yield RoomModel_1.Room.findOne({ owner: user.id });
+    const parent = yield guild.channels.fetch(process.env.PARENT_CATEGORY);
     return yield guild.channels.create(room.name, {
         type: 'GUILD_VOICE',
-        parent: config_1.privateRoomConfig.categoryChannel,
+        parent,
         userLimit: room.limit,
     });
 });

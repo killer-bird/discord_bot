@@ -2,6 +2,9 @@ import {SlashCommandBuilder} from "@discordjs/builders"
 import { CommandInteraction, User, MessageEmbed, Client } from "discord.js"
 import { User as UserModel } from "../database/models/UserModel"
 import { client  } from "../bot"
+import { ICommand } from "../interfaces/ICommand"
+
+
 
 export const data = new SlashCommandBuilder()
     .setName("top")
@@ -21,3 +24,9 @@ export async function execute(interaction: CommandInteraction) {
     await interaction.deferReply()
     return await interaction.editReply({embeds: [ topEmbed ]})
 }
+
+
+export default {
+    data,
+    execute
+} as ICommand

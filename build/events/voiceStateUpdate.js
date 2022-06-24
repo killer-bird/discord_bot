@@ -9,9 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onVoiceStateUpdate = void 0;
 const privateRoom_utills_1 = require("../utills/privateRoom.utills");
-const config_1 = require("../config");
 const RoomModel_1 = require("../database/models/RoomModel");
 const onVoiceStateUpdate = (oldState, newState) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
@@ -39,15 +37,18 @@ const onVoiceStateUpdate = (oldState, newState) => __awaiter(void 0, void 0, voi
                 yield ((_a = newState.member) === null || _a === void 0 ? void 0 : _a.voice.setChannel(voice));
             }
             catch (error) {
-                const voice = yield (0, privateRoom_utills_1.createRoom)(member.user, newState.guild, config_1.privateRoomConfig);
+                const voice = yield (0, privateRoom_utills_1.createRoom)(member.user, newState.guild);
                 yield ((_b = newState.member) === null || _b === void 0 ? void 0 : _b.voice.setChannel(voice));
                 yield RoomModel_1.Room.updateOne({ owner: member.user.id }, { id: voice.id });
             }
             return;
         }
-        const voice = yield (0, privateRoom_utills_1.createRoom)(member.user, newState.guild, config_1.privateRoomConfig);
+        const voice = yield (0, privateRoom_utills_1.createRoom)(member.user, newState.guild);
         yield ((_c = newState.member) === null || _c === void 0 ? void 0 : _c.voice.setChannel(voice));
         yield RoomModel_1.Room.updateOne({ owner: member.user.id }, { id: voice.id });
     }
 });
-exports.onVoiceStateUpdate = onVoiceStateUpdate;
+exports.default = {
+    name: 'voiceStateUpdate',
+    run: onVoiceStateUpdate
+};

@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.execute = exports.data = void 0;
 const builders_1 = require("@discordjs/builders");
 const discord_js_1 = require("discord.js");
 const UserModel_1 = require("../database/models/UserModel");
@@ -25,7 +24,7 @@ const getInfoEmbed = (target) => __awaiter(void 0, void 0, void 0, function* () 
         .addField('Мужские cлёзки', String(info === null || info === void 0 ? void 0 : info.currency));
     return infoEmbed;
 });
-exports.data = new builders_1.SlashCommandBuilder()
+const data = new builders_1.SlashCommandBuilder()
     .setName("info")
     .setDescription("get info")
     .addUserOption(option => (option.setName("user")
@@ -52,4 +51,7 @@ function execute(interaction) {
         }
     });
 }
-exports.execute = execute;
+exports.default = {
+    data,
+    execute
+};

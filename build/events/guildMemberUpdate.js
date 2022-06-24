@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.guildMemberUpdate = void 0;
 const UserModel_1 = require("../database/models/UserModel");
 const getRolesArray_1 = require("../utills/getRolesArray");
 const guildMemberUpdate = (oldMember, newMember) => __awaiter(void 0, void 0, void 0, function* () {
@@ -18,4 +17,7 @@ const guildMemberUpdate = (oldMember, newMember) => __awaiter(void 0, void 0, vo
         yield UserModel_1.User.updateOne({ id: newMember.user.id }, { roles: (0, getRolesArray_1.getRolesArray)(newMember) });
     }
 });
-exports.guildMemberUpdate = guildMemberUpdate;
+exports.default = {
+    name: 'guildMemberUpdate',
+    run: guildMemberUpdate
+};

@@ -4,8 +4,10 @@ import { User as UserModel } from "../database/models/UserModel"
 import { incOrDecrCurrency } from "../utills/incOrDecrCurrency"
 import { isUserExist } from '../utills/isUserExist'
 import { getNotExistEmbed } from "../utills/getNotExistsEmbed"
+import { ICommand } from "../interfaces/ICommand"
 
-export const data = new SlashCommandBuilder()
+
+const data = new SlashCommandBuilder()
     .setName("give")
     .setDescription("giveCurrency")
     .addIntegerOption(option=> (
@@ -20,7 +22,7 @@ export const data = new SlashCommandBuilder()
     })
     
 
-export async function execute(interaction: CommandInteraction) {
+async function execute(interaction: CommandInteraction) {
     const author = interaction.member?.user as User
     const target = interaction.options.getUser("user") as User
     const count =  interaction.options.getInteger("count") as number  
@@ -42,3 +44,8 @@ export async function execute(interaction: CommandInteraction) {
        
     return interaction.reply("GIVE")
 }
+
+export default {
+    data,
+    execute
+} as ICommand
