@@ -2,13 +2,15 @@ import { Client, Collection } from "discord.js"
 import { connect } from "mongoose"
 import { readdirSync } from "fs"
 import path from "path"
-import { ICommand, IEvent } from "../interfaces/"
+import { ICommand, IEvent, IButton } from "../interfaces/"
 
 
 export default class ExtendedClient extends Client {
     
     public commands: Collection<string, ICommand> = new Collection()
     public events: Collection<string, IEvent> = new Collection()
+    public buttons: Collection<string, IButton> = new Collection()
+
 
     constructor(
         public token: string,
@@ -26,8 +28,7 @@ export default class ExtendedClient extends Client {
         const commandPath = path.join(__dirname, "../commands/")
         readdirSync(commandPath).forEach( async (c) => {
             const command = await import(`${commandPath}/${c}`)
-            this.commands.set(command.default?.data.name, command.default?.execute)
-            
+            this.commands.set(command.default?.data.name, command.default)          
         })
         
 
@@ -38,6 +39,16 @@ export default class ExtendedClient extends Client {
             if(Object.keys(event).length) {
                 this.on(event.default.name, event.default.run.bind(this))
             }      
+        })
+
+
+        //BUTTONS!!!!!!!!
+        const buttonsPath = path.join(__dirname, "../buttons/")
+        readdirSync(buttonsPath).forEach(async (b) => {
+            const button = await import (`${buttonsPath}/${b}`)
+            if(Object.keys(button).length) {
+                console.log(button?.default)
+            }
         })
 
     }   

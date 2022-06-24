@@ -26,7 +26,6 @@ const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
             yield (0, newRoom_1.newRoom)(member);
         }
     }));
-    console.log(client.commands);
     console.log("on ready!");
 });
 exports.default = {

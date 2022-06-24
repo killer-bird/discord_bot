@@ -7,7 +7,7 @@ import { MessageButton,
          MessageActionRow
         } from "discord.js"
 import { Room } from "../database/models/RoomModel"
-import { IRoom } from "../interfaces/IRoom"
+import { IRoom, IButton } from "../interfaces/"
 import { RoomName } from "../types/RoomName"
 import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
 import { getErrEmbed } from "../utills/getErrEmbed"
@@ -100,3 +100,9 @@ export const execute = async (interaction: ButtonInteraction): Promise<void> => 
         }, 5000);
     }
 }
+
+
+export default {
+    data: renameBtn,
+    execute
+} as IButton

@@ -21,7 +21,6 @@ const onReady = async (client: ExtendedClient) => {
             await newRoom(member)       
         }
     }) 
-    console.log(client.commands)
     console.log("on ready!")
 }
 
