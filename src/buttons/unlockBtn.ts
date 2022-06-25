@@ -1,6 +1,6 @@
-import { MessageButton, CommandInteraction, GuildMember, MessageEmbed } from "discord.js"
+import { MessageButton, ButtonInteraction, GuildMember, MessageEmbed } from "discord.js"
 import { Room } from "../database/models/RoomModel"
-import { IRoom } from "../interfaces/IRoom"
+import { IRoom, IButton } from "../interfaces"
 
 const getUnlockRoomEmbed = (): MessageEmbed => {
     const unlockRoomEmbed = new MessageEmbed()
@@ -17,7 +17,7 @@ export const unlockBtn = new MessageButton()
 
 
 
-export const execute = async ( interaction: CommandInteraction) => {
+export const execute = async ( interaction: ButtonInteraction) => {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: member.voice.channelId}) as IRoom
 
@@ -29,3 +29,8 @@ export const execute = async ( interaction: CommandInteraction) => {
         }, 5000);
     }
 }
+
+export default {
+    data : unlockBtn,
+    execute
+} as IButton

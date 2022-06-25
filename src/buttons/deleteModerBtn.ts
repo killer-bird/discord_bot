@@ -1,6 +1,6 @@
-import { MessageButton, CommandInteraction, GuildMember, VoiceChannel, User, MessageEmbed } from "discord.js"
+import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, MessageEmbed } from "discord.js"
 import { Room } from "../database/models/RoomModel"
-import { IRoom } from "../interfaces/IRoom"
+import { IRoom, IButton } from "../interfaces"
 import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
 import { getNotHaveTimeEmbed } from "../utills/getNotHaveTimeEmbed"
 
@@ -13,6 +13,11 @@ export const deleteModerBtn = new MessageButton()
     .setStyle('SECONDARY')
 
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
     await interaction.reply('delete moder')
 }
+
+export default {
+    data: deleteModerBtn,
+    execute
+} as IButton

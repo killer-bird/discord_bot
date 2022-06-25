@@ -27,7 +27,7 @@ exports.deleteModerBtn = exports.setModerBtn = exports.unmuteBtn = exports.muteB
 exports.refreshBtn = __importStar(require("./refreshBtn"));
 exports.renameBtn = __importStar(require("./renameBtn"));
 exports.limitBtn = __importStar(require("./limitBtn"));
-exports.roomBtnsHigh = __importStar(require("./roomBtnRowHigh"));
+exports.roomBtnsHigh = __importStar(require("../components/roomBtnRowHigh"));
 exports.roomBtnsLow = __importStar(require("./roomBtnRowLow"));
 exports.lockBtn = __importStar(require("./lockBtn"));
 exports.unlockBtn = __importStar(require("./unlockBtn"));

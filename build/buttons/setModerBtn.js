@@ -19,3 +19,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     yield interaction.reply('setModer');
 });
 exports.execute = execute;
+exports.default = {
+    data: exports.setModerBtn,
+    execute: exports.execute
+};

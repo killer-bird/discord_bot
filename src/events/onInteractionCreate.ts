@@ -1,7 +1,7 @@
 import { execute } from './../modals/renameModal';
 import { Client, TextChannel, CommandInteraction } from "discord.js"
 import ExtendedClient from "../Client"
-import { IEvent, ICommand } from "../interfaces"
+import { IEvent, ICommand, IButton } from "../interfaces"
 import { User } from "../database/models/UserModel"
 import { createUser } from "../utills/createUser"
 import { newRoom } from "../utills/newRoom"
@@ -9,9 +9,10 @@ import { createRoomSettingsMsg } from "../utills/createRoomSettingsMsg"
 
 
 const onInteractionCreate = async (interaction: CommandInteraction) => {
+    const client = interaction.client as ExtendedClient
+    
     if (interaction.isCommand()){
         
-        const client = interaction.client as ExtendedClient
         const commandName = interaction.commandName
         if(!commandName) {
             return
@@ -24,7 +25,15 @@ const onInteractionCreate = async (interaction: CommandInteraction) => {
         }
     }
     if(interaction.isButton()){
-        console.log(interaction.customId)
+        const customId = interaction.customId
+
+        const button = client.buttons.get(customId) as IButton
+        console.log(button)
+        try {
+            await button.execute(interaction)
+        } catch (error) {
+            console.log(error)
+        }
     }
     
 }

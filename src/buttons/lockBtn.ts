@@ -1,6 +1,6 @@
-import { MessageButton, CommandInteraction, GuildMember, MessageEmbed } from "discord.js"
+import { MessageButton, ButtonInteraction, GuildMember, MessageEmbed } from "discord.js"
 import { Room } from "../database/models/RoomModel"
-import { IRoom } from "../interfaces/IRoom"
+import { IRoom, IButton } from "../interfaces"
 import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
 import { getErrEmbed } from "../utills/getErrEmbed"
 
@@ -17,7 +17,7 @@ export const lockBtn = new MessageButton()
     .setStyle("SECONDARY")
 
 
-export const execute = async(interaction: CommandInteraction) : Promise<void> => {
+export const execute = async(interaction: ButtonInteraction): Promise<void> => {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: member.voice.channelId}) as IRoom
 
@@ -33,5 +33,9 @@ export const execute = async(interaction: CommandInteraction) : Promise<void> =>
             await interaction.deleteReply()
         }, 5000);
     }
-     
 }
+
+export default {
+    data: lockBtn,
+    execute
+} as IButton

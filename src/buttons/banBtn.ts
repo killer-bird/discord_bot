@@ -1,8 +1,8 @@
-import { MessageButton, CommandInteraction, GuildMember, VoiceChannel, User, MessageEmbed, Message, Collection, Snowflake } from "discord.js"
+import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, MessageEmbed, Message, Collection, Snowflake } from "discord.js"
 import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
 import { getErrEmbed } from "../utills/getErrEmbed"
 import { Room } from "../database/models/RoomModel"
-import { IRoom } from "../interfaces/IRoom"
+import { IRoom, IButton } from "../interfaces/"
 import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
 import { getNotPermsErr } from "../utills/getNotPermsErr"
 
@@ -29,7 +29,7 @@ export const banBtn = new MessageButton()
     .setStyle('SECONDARY')
 
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: member.voice.channelId}) as IRoom
     
@@ -76,3 +76,8 @@ export const execute = async (interaction: CommandInteraction) => {
         await getNotPermsErr(interaction)
     }
 }
+
+export default {
+    data: banBtn,
+    execute
+} as IButton

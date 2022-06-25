@@ -1,4 +1,5 @@
-import { MessageButton, MessageActionRow, CommandInteraction } from "discord.js"
+import { MessageButton, MessageActionRow, ButtonInteraction } from "discord.js"
+import { IButton } from "../interfaces"
 import { sendCaptcha } from "../utills/sendCaptcha"
 
 const refreshConfig  = {
@@ -16,7 +17,7 @@ export const data = new MessageActionRow()
 )
 
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ButtonInteraction) => {
     if (refreshConfig.timeout) {
         return await interaction.reply("Подождите 5 минут")
     } else {
@@ -28,3 +29,8 @@ export const execute = async (interaction: CommandInteraction) => {
         return await sendCaptcha(interaction.user)
     }
 }
+
+export default {
+    data: refreshBtn,
+    execute
+} as IButton

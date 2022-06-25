@@ -1,6 +1,6 @@
-import { MessageButton, MessageActionRow, CommandInteraction, GuildMember, VoiceChannel, Message } from "discord.js"
+import { MessageButton, MessageActionRow, ButtonInteraction, GuildMember, VoiceChannel, Message } from "discord.js"
 import { Room } from "../database/models/RoomModel"
-import { IRoom } from "../interfaces/IRoom"
+import { IRoom, IButton } from "../interfaces"
 import { UserLimit } from "../types/UserLimit"
 import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
 import { getNotHaveTimeEmbed } from "../utills/getNotHaveTimeEmbed"
@@ -31,7 +31,7 @@ export const data = new MessageActionRow()
     .addComponents(limitBtn)
 
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: ButtonInteraction):Promise<void> => {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: member.voice.channelId}) as IRoom
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
@@ -77,3 +77,8 @@ export const execute = async (interaction: CommandInteraction) => {
         }, 5000);
     }
 }
+
+export default {
+    data: limitBtn,
+    execute
+} as IButton

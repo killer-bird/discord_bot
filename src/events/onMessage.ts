@@ -3,7 +3,6 @@ import { IEvent } from "../interfaces/IEvents"
 
 
 const onMessage = async (message: Message) => {
-    console.log(message.content)
 }
 
 export default {

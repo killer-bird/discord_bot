@@ -83,3 +83,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.execute = execute;
+exports.default = {
+    data: exports.unmuteBtn,
+    execute: exports.execute
+};

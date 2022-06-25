@@ -1,3 +1,4 @@
+import { execute } from './../modals/renameModal';
 import { Client, Collection } from "discord.js"
 import { connect } from "mongoose"
 import { readdirSync } from "fs"
@@ -46,8 +47,9 @@ export default class ExtendedClient extends Client {
         const buttonsPath = path.join(__dirname, "../buttons/")
         readdirSync(buttonsPath).forEach(async (b) => {
             const button = await import (`${buttonsPath}/${b}`)
-            if(Object.keys(button).length) {
-                console.log(button?.default)
+            if(Object.keys(button).length && button.default?.data) {
+                this.buttons.set(button.default.data.customId, button.default)
+                
             }
         })
 
