@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.renameBtn = void 0;
 const discord_js_1 = require("discord.js");
 const RoomModel_1 = require("../database/models/RoomModel");
-const checkPerms_1 = require("../utills/checkPerms");
-const getErrEmbed_1 = require("../utills/getErrEmbed");
+const checkPerms_1 = require("../privateRooms/checkPerms");
+const embeds_1 = require("../embeds");
 const setName = (room, name) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(name);
     yield room.edit({ name: name });
@@ -88,7 +88,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         // }
     }
     else {
-        yield interaction.reply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("В этой комнате у вас нет таких полномочий")] });
+        yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("В этой комнате у вас нет таких полномочий")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
         }), 5000);

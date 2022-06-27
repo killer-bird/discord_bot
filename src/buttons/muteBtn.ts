@@ -1,10 +1,10 @@
 import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, Message, Collection, Snowflake } from "discord.js"
-import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
-import { getErrEmbed } from "../utills/getErrEmbed"
+import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
+import { getErrEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
-import { getNotPermsErr } from "../utills/getNotPermsErr"
+import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
 
 
 const muteUser = async (room: VoiceChannel, target: GuildMember) :Promise<void> => {

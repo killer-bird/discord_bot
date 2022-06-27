@@ -1,5 +1,5 @@
 import { CommandInteraction, ButtonInteraction } from "discord.js"
-import { getErrEmbed } from '../utills/getErrEmbed'
+import { getErrEmbed } from '../embeds'
 
 
 

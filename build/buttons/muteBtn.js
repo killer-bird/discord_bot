@@ -11,11 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.muteBtn = void 0;
 const discord_js_1 = require("discord.js");
-const checkPerms_1 = require("../utills/checkPerms");
-const getErrEmbed_1 = require("../utills/getErrEmbed");
+const checkPerms_1 = require("../privateRooms/checkPerms");
+const embeds_1 = require("../embeds");
 const RoomModel_1 = require("../database/models/RoomModel");
 const getAwaitMsgEmbed_1 = require("../utills/getAwaitMsgEmbed");
-const getNotPermsErr_1 = require("../utills/getNotPermsErr");
+const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
 const muteUser = (room, target) => __awaiter(void 0, void 0, void 0, function* () {
     const afk = yield target.guild.channels.fetch(process.env.AFK);
     if (room.members.has(target.user.id)) {
@@ -38,7 +38,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         yield interaction.reply({ embeds: [(0, getAwaitMsgEmbed_1.getAwaitMsgEmbed)("Укажите пользователя, которого необходимо выкинуть из комнаты")] });
         const awaitMsgTimeout = setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-            yield interaction.editReply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
+            yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
             }), 3000);
@@ -65,7 +65,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         }
         catch (error) {
             console.log(error);
-            yield interaction.editReply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
+            yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
             }), 5000);

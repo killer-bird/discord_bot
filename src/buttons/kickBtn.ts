@@ -2,9 +2,9 @@ import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, Mess
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
-import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
-import { getErrEmbed } from "../utills/getErrEmbed"
-import { getNotPermsErr } from "../utills/getNotPermsErr"
+import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
+import { getErrEmbed } from "../embeds"
+import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
 
 
 const kickUser = async (target: GuildMember) :Promise<void> => {
@@ -39,9 +39,10 @@ export const execute = async (interaction: ButtonInteraction) => {
             }
             return false
         } 
+
         try {
             const response = await interaction.channel?.awaitMessages({filter: filter, max: 1, time: 15000})
-            if (response) {
+            if (response?.size) {
                 const members = response.first()?.mentions.members as Collection<Snowflake, GuildMember>
                 const target = members.first() as GuildMember
                 if( checkAdmPerms(target.user, room) || !checkAdmPerms(interaction.user, room) && checkModPerms(target.user, room) ) {

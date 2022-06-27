@@ -1,8 +1,8 @@
 import { MessageButton, ButtonInteraction, GuildMember, MessageEmbed } from "discord.js"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
-import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
-import { getErrEmbed } from "../utills/getErrEmbed"
+import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
+import { getErrEmbed } from "../embeds"
 
 const getlockRoomEmbed = () : MessageEmbed => {
     const lockRoomEmbed = new MessageEmbed()

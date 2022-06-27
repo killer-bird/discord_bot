@@ -1,8 +1,8 @@
 import { TextChannel, MessageEmbed } from "discord.js"
-import * as buttons from "../buttons"
+import { btnRowLow, btnRowHigh } from "../components"
 
 
-export const getRoomSettingsEmbed = ():MessageEmbed => {
+const getRoomSettingsEmbed = ():MessageEmbed => {
     const roomSettingsEmbed = new MessageEmbed()
     roomSettingsEmbed.setTitle("Настройки личной комнаты")
 
@@ -28,6 +28,6 @@ export const getRoomSettingsEmbed = ():MessageEmbed => {
 export const createRoomSettingsMsg = async (textChannel: TextChannel) :Promise<void> => {
     await textChannel.send({
         embeds: [ getRoomSettingsEmbed() ],
-        components: [ buttons.roomBtnsHigh.data, buttons.roomBtnsLow.data ]
+        components: [ btnRowHigh, btnRowLow ]
     })
 }

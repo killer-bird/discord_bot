@@ -2,9 +2,8 @@ import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, Mess
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
-import { getNotHaveTimeEmbed } from "../utills/getNotHaveTimeEmbed"
-
-
+import { getErrEmbed } from "../embeds"
+    
 
 
 export const deleteModerBtn = new MessageButton()
@@ -14,7 +13,7 @@ export const deleteModerBtn = new MessageButton()
 
 
 export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
-    await interaction.reply('delete moder')
+    
 }
 
 export default {

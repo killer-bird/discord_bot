@@ -1,5 +1,5 @@
 import { VoiceState, GuildMember, VoiceChannel } from "discord.js";
-import { createRoom, deleteRoom } from "../utills/privateRoom.utills";
+import { createRoom, deleteRoom } from "../privateRooms/privateRoom.utills";
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IEvent } from "../interfaces"
 
@@ -35,7 +35,7 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
             } catch (error) {             
                 const voice =  await createRoom(member.user, newState.guild)
                 await newState.member?.voice.setChannel(voice)
-                await Room.updateOne({owner: member.user.id}, {id: voice.id})
+               
                 
             } 
             return           

@@ -2,8 +2,8 @@ import {SlashCommandBuilder} from "@discordjs/builders"
 import { CommandInteraction, MessageEmbed, User } from "discord.js"
 import { User as UserModel } from "../database/models/UserModel"
 import { isUserExist } from '../utills/isUserExist'
-import { getNotExistEmbed } from "../utills/getNotExistsEmbed"
-import { ICommand } from "../interfaces/ICommand"
+import { getErrEmbed } from "../embeds"
+import { ICommand } from "../interfaces"
 
 const getInfoEmbed = async (target: User) :Promise<MessageEmbed> => { 
     
@@ -29,14 +29,17 @@ const data = new SlashCommandBuilder()
 
 
 async function execute(interaction: CommandInteraction) {
-    const user = interaction.options.getUser("user")
+    const target = interaction.options.getUser("user")
     const author = interaction.member?.user as User
     await interaction.deferReply()
-    if (user) {      
-        if( await isUserExist(user.id)){
-            return interaction.editReply({embeds: [ await getInfoEmbed(user)]})
+    if (target) {      
+        if( await isUserExist(target.id)){
+            return interaction.editReply({embeds: [ await getInfoEmbed(target)]})
         } else {
-            return interaction.editReply({embeds: [ getNotExistEmbed(user) ]})
+            return interaction.editReply({embeds: [ getErrEmbed(`
+            Введен неккоректный пользователь: ${target} 
+            Если это не бот, обратитесь за помощью к администрации.        
+            `) ]})
             .then(()=> setTimeout(() => {
                 interaction.deleteReply()
             }, 5000))

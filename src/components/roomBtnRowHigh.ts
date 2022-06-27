@@ -6,7 +6,7 @@ import { unlockBtn } from "../buttons/unlockBtn"
 import { banBtn } from "../buttons/banBtn"
 import { unbanBtn } from "../buttons/unbanBtn"
 
-export const data = new MessageActionRow()
+export const btnRowHigh = new MessageActionRow()
 .addComponents( 
     renameBtn, 
     limitBtn, 

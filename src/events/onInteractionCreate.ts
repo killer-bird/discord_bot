@@ -1,18 +1,12 @@
-import { execute } from './../modals/renameModal';
-import { Client, TextChannel, CommandInteraction } from "discord.js"
+import { CommandInteraction } from "discord.js"
 import ExtendedClient from "../Client"
-import { IEvent, ICommand, IButton } from "../interfaces"
-import { User } from "../database/models/UserModel"
-import { createUser } from "../utills/createUser"
-import { newRoom } from "../utills/newRoom"
-import { createRoomSettingsMsg } from "../utills/createRoomSettingsMsg"
+import { IEvent, ICommand, IButton, IModal } from "../interfaces"
 
 
 const onInteractionCreate = async (interaction: CommandInteraction) => {
     const client = interaction.client as ExtendedClient
     
     if (interaction.isCommand()){
-        
         const commandName = interaction.commandName
         if(!commandName) {
             return
@@ -24,19 +18,33 @@ const onInteractionCreate = async (interaction: CommandInteraction) => {
             console.log(error)
         }
     }
+
+
     if(interaction.isButton()){
         const customId = interaction.customId
-
         const button = client.buttons.get(customId) as IButton
-        console.log(button)
         try {
+            console.log(interaction.id)
             await button.execute(interaction)
+        } catch (error) {
+            console.log(error)
+            return
+        }
+    }
+
+    if(interaction.isModalSubmit()){
+        const customId = interaction.customId
+        const modal = client.modals.get(customId) as IModal
+        
+        try {
+            await modal.execute(interaction)
         } catch (error) {
             console.log(error)
         }
     }
     
 }
+
 
 export default {
     name: 'interactionCreate',

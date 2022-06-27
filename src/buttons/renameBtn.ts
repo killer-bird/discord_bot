@@ -9,8 +9,8 @@ import { MessageButton,
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces/"
 import { RoomName } from "../types/RoomName"
-import { checkAdmPerms, checkModPerms } from "../utills/checkPerms"
-import { getErrEmbed } from "../utills/getErrEmbed"
+import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
+import { getErrEmbed } from "../embeds"
 
 
 const setName = async (room: VoiceChannel, name: RoomName) :Promise<void> => {

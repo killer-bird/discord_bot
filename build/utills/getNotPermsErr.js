@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNotPermsErr = void 0;
-const getErrEmbed_1 = require("../utills/getErrEmbed");
+const embeds_1 = require("../embeds");
 const getNotPermsErr = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
-    yield interaction.reply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("В этой комнате у вас нет таких полномочий")] });
+    yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("В этой комнате у вас нет таких полномочий")] });
     setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
         yield interaction.deleteReply();
     }), 5000);

@@ -1,7 +1,7 @@
 import {SlashCommandBuilder} from "@discordjs/builders"
 import { CommandInteraction, User } from "discord.js"
 import { User as UserModel } from "../database/models/UserModel"
-import { getNotificationEmbed } from '../utills/getNotificationEmbed'
+import { getNotifyEmbed } from '../embeds'
 import { ICommand } from "../interfaces/ICommand"
 
 
@@ -31,7 +31,7 @@ export async function execute(interaction: CommandInteraction) {
     if (user) {
         setCurrency(user, count)
         .then( async () => {
-           await ( await user.createDM() ).send({embeds: [getNotificationEmbed(`${author} установил вам  баланс мужских слёзок: ${count}`)]})
+           await ( await user.createDM() ).send({embeds: [getNotifyEmbed(`${author} установил вам  баланс мужских слёзок: ${count}`)]})
         })
     } else {
         setCurrency(author , count)

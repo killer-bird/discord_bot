@@ -13,9 +13,9 @@ exports.execute = exports.kickBtn = void 0;
 const discord_js_1 = require("discord.js");
 const RoomModel_1 = require("../database/models/RoomModel");
 const getAwaitMsgEmbed_1 = require("../utills/getAwaitMsgEmbed");
-const checkPerms_1 = require("../utills/checkPerms");
-const getErrEmbed_1 = require("../utills/getErrEmbed");
-const getNotPermsErr_1 = require("../utills/getNotPermsErr");
+const checkPerms_1 = require("../privateRooms/checkPerms");
+const embeds_1 = require("../embeds");
+const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
 const kickUser = (target) => __awaiter(void 0, void 0, void 0, function* () {
     const afk = yield target.guild.channels.fetch(process.env.AFK);
     yield target.voice.setChannel(afk);
@@ -31,7 +31,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         yield interaction.reply({ embeds: [(0, getAwaitMsgEmbed_1.getAwaitMsgEmbed)("Укажите пользователя, которого необходимо замутить")] });
         const awaitMsgTimeout = setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-            yield interaction.editReply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
+            yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
             }), 3000);
@@ -44,7 +44,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         };
         try {
             const response = yield ((_a = interaction.channel) === null || _a === void 0 ? void 0 : _a.awaitMessages({ filter: filter, max: 1, time: 15000 }));
-            if (response) {
+            if (response === null || response === void 0 ? void 0 : response.size) {
                 const members = (_b = response.first()) === null || _b === void 0 ? void 0 : _b.mentions.members;
                 const target = members.first();
                 if ((0, checkPerms_1.checkAdmPerms)(target.user, room) || !(0, checkPerms_1.checkAdmPerms)(interaction.user, room) && (0, checkPerms_1.checkModPerms)(target.user, room)) {
@@ -58,7 +58,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         }
         catch (error) {
             console.log(error);
-            yield interaction.editReply({ embeds: [(0, getErrEmbed_1.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
+            yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
             }), 5000);

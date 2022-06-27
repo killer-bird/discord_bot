@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const privateRoom_utills_1 = require("../utills/privateRoom.utills");
+const privateRoom_utills_1 = require("../privateRooms/privateRoom.utills");
 const RoomModel_1 = require("../database/models/RoomModel");
 const onVoiceStateUpdate = (oldState, newState) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
@@ -39,7 +39,6 @@ const onVoiceStateUpdate = (oldState, newState) => __awaiter(void 0, void 0, voi
             catch (error) {
                 const voice = yield (0, privateRoom_utills_1.createRoom)(member.user, newState.guild);
                 yield ((_b = newState.member) === null || _b === void 0 ? void 0 : _b.voice.setChannel(voice));
-                yield RoomModel_1.Room.updateOne({ owner: member.user.id }, { id: voice.id });
             }
             return;
         }

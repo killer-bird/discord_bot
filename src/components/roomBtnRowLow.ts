@@ -7,7 +7,7 @@ import { deleteModerBtn } from "../buttons/deleteModerBtn"
 import { setModerBtn } from "../buttons/setModerBtn"
 
 
-export const data = new MessageActionRow()
+export const btnRowLow = new MessageActionRow()
 .addComponents( unbanBtn, kickBtn, muteBtn, unmuteBtn, setModerBtn)
 
 

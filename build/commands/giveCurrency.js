@@ -13,7 +13,7 @@ const builders_1 = require("@discordjs/builders");
 const UserModel_1 = require("../database/models/UserModel");
 const incOrDecrCurrency_1 = require("../utills/incOrDecrCurrency");
 const isUserExist_1 = require("../utills/isUserExist");
-const getNotExistsEmbed_1 = require("../utills/getNotExistsEmbed");
+const embeds_1 = require("../embeds");
 const data = new builders_1.SlashCommandBuilder()
     .setName("give")
     .setDescription("giveCurrency")
@@ -38,7 +38,10 @@ function execute(interaction) {
                 yield (0, incOrDecrCurrency_1.incOrDecrCurrency)(target, count);
             }
             else {
-                return interaction.reply({ embeds: [(0, getNotExistsEmbed_1.getNotExistEmbed)(target)] })
+                return interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)(`
+            Введен неккоректный пользователь: ${target} 
+            Если это не бот, обратитесь за помощью к администрации.
+            `)] })
                     .then(() => setTimeout(() => {
                     interaction.deleteReply();
                 }, 5000));

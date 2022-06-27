@@ -23,12 +23,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteModerBtn = exports.setModerBtn = exports.unmuteBtn = exports.muteBtn = exports.kickBtn = exports.unbanBtn = exports.banBtn = exports.unlockBtn = exports.lockBtn = exports.roomBtnsLow = exports.roomBtnsHigh = exports.limitBtn = exports.renameBtn = exports.refreshBtn = void 0;
+exports.deleteModerBtn = exports.setModerBtn = exports.unmuteBtn = exports.muteBtn = exports.kickBtn = exports.unbanBtn = exports.banBtn = exports.unlockBtn = exports.lockBtn = exports.limitBtn = exports.renameBtn = exports.refreshBtn = void 0;
 exports.refreshBtn = __importStar(require("./refreshBtn"));
 exports.renameBtn = __importStar(require("./renameBtn"));
 exports.limitBtn = __importStar(require("./limitBtn"));
-exports.roomBtnsHigh = __importStar(require("../components/roomBtnRowHigh"));
-exports.roomBtnsLow = __importStar(require("./roomBtnRowLow"));
 exports.lockBtn = __importStar(require("./lockBtn"));
 exports.unlockBtn = __importStar(require("./unlockBtn"));
 exports.banBtn = __importStar(require("./banBtn"));

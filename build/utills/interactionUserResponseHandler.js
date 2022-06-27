@@ -9,11 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userResponseHandler = void 0;
-const getNotHaveTimeEmbed_1 = require("./getNotHaveTimeEmbed");
 const userResponseHandler = (func, interaction, response, ...args) => __awaiter(void 0, void 0, void 0, function* () {
     const awaitMsgTimeout = setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-        yield interaction.editReply({ embeds: [(0, getNotHaveTimeEmbed_1.getNotHaveTimeEmbed)()] });
+        yield interaction.editReply({ embeds: [getNotHaveTimeEmbed()] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
         }), 3000);
@@ -30,4 +28,3 @@ const userResponseHandler = (func, interaction, response, ...args) => __awaiter(
         return;
     }
 });
-exports.userResponseHandler = userResponseHandler;

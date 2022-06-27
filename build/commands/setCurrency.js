@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.data = void 0;
 const builders_1 = require("@discordjs/builders");
 const UserModel_1 = require("../database/models/UserModel");
-const getNotificationEmbed_1 = require("../utills/getNotificationEmbed");
+const embeds_1 = require("../embeds");
 const setCurrency = (target, count) => __awaiter(void 0, void 0, void 0, function* () {
     yield UserModel_1.User.updateOne({ id: target.id }, { currency: count });
 });
@@ -35,7 +35,7 @@ function execute(interaction) {
         if (user) {
             setCurrency(user, count)
                 .then(() => __awaiter(this, void 0, void 0, function* () {
-                yield (yield user.createDM()).send({ embeds: [(0, getNotificationEmbed_1.getNotificationEmbed)(`${author} установил вам  баланс мужских слёзок: ${count}`)] });
+                yield (yield user.createDM()).send({ embeds: [(0, embeds_1.getNotifyEmbed)(`${author} установил вам  баланс мужских слёзок: ${count}`)] });
             }));
         }
         else {

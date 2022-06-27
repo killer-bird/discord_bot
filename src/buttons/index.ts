@@ -1,8 +1,6 @@
 export * as refreshBtn from './refreshBtn';
 export * as renameBtn from './renameBtn';
 export * as limitBtn from './limitBtn';
-export * as roomBtnsHigh from '../components/roomBtnRowHigh';
-export * as roomBtnsLow from './roomBtnRowLow';
 export * as lockBtn from './lockBtn';
 export * as unlockBtn from './unlockBtn';
 export * as banBtn from "./banBtn"

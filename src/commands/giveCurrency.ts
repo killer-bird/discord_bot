@@ -3,7 +3,7 @@ import { CommandInteraction, User } from "discord.js"
 import { User as UserModel } from "../database/models/UserModel"
 import { incOrDecrCurrency } from "../utills/incOrDecrCurrency"
 import { isUserExist } from '../utills/isUserExist'
-import { getNotExistEmbed } from "../utills/getNotExistsEmbed"
+import { getErrEmbed } from "../embeds"
 import { ICommand } from "../interfaces/ICommand"
 
 
@@ -34,7 +34,10 @@ async function execute(interaction: CommandInteraction) {
             await incOrDecrCurrency(author, -count)
             await incOrDecrCurrency(target, count)
         } else {
-            return interaction.reply({embeds: [ getNotExistEmbed(target) ]})
+            return interaction.reply({embeds: [ getErrEmbed(`
+            Введен неккоректный пользователь: ${target} 
+            Если это не бот, обратитесь за помощью к администрации.
+            `) ]})
             .then(()=> setTimeout(() => {
                 interaction.deleteReply()
             }, 5000))

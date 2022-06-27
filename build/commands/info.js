@@ -13,7 +13,7 @@ const builders_1 = require("@discordjs/builders");
 const discord_js_1 = require("discord.js");
 const UserModel_1 = require("../database/models/UserModel");
 const isUserExist_1 = require("../utills/isUserExist");
-const getNotExistsEmbed_1 = require("../utills/getNotExistsEmbed");
+const embeds_1 = require("../embeds");
 const getInfoEmbed = (target) => __awaiter(void 0, void 0, void 0, function* () {
     const info = yield UserModel_1.User.findOne({ id: target === null || target === void 0 ? void 0 : target.id });
     console.log(info === null || info === void 0 ? void 0 : info.currency);
@@ -32,15 +32,18 @@ const data = new builders_1.SlashCommandBuilder()
 function execute(interaction) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const user = interaction.options.getUser("user");
+        const target = interaction.options.getUser("user");
         const author = (_a = interaction.member) === null || _a === void 0 ? void 0 : _a.user;
         yield interaction.deferReply();
-        if (user) {
-            if (yield (0, isUserExist_1.isUserExist)(user.id)) {
-                return interaction.editReply({ embeds: [yield getInfoEmbed(user)] });
+        if (target) {
+            if (yield (0, isUserExist_1.isUserExist)(target.id)) {
+                return interaction.editReply({ embeds: [yield getInfoEmbed(target)] });
             }
             else {
-                return interaction.editReply({ embeds: [(0, getNotExistsEmbed_1.getNotExistEmbed)(user)] })
+                return interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)(`
+            Введен неккоректный пользователь: ${target} 
+            Если это не бот, обратитесь за помощью к администрации.        
+            `)] })
                     .then(() => setTimeout(() => {
                     interaction.deleteReply();
                 }, 5000));

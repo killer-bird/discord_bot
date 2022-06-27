@@ -1,8 +1,8 @@
-import { Modal, TextInputComponent, GuildMember, MessageActionRow, VoiceChannel } from "discord.js"
+import { Modal, TextInputComponent, ModalSubmitInteraction, GuildMember, MessageActionRow, VoiceChannel } from "discord.js"
 import { Room } from "../database/models/RoomModel"
-import { IRoom } from "../interfaces/IRoom"
+import { IModal } from "../interfaces"
 import { RoomName } from "../types/RoomName"
-
+import { getNotifyEmbed } from "../embeds"
 
 const setName = async (room: VoiceChannel, name: RoomName) :Promise<void> => {
     console.log(name)
@@ -15,7 +15,7 @@ export const renameModal = new Modal()
     .setTitle('Переименовать комнату')
     const inputName = new TextInputComponent() 
     .setCustomId('renameBtnInput')
-    .setLabel('Введите новое название для комнаты')
+    .setLabel('Введите новое название для комнаты, для сброса названия введите **0**')
     .setStyle('SHORT')
     const row = new MessageActionRow({
         components: [inputName]
@@ -23,14 +23,24 @@ export const renameModal = new Modal()
     renameModal.addComponents(row)
 
 
-export const execute = async (interaction:any,) => {
-    const { customId } = interaction
+export const execute = async (interaction:ModalSubmitInteraction) => {
     const member = interaction.member as GuildMember
-    const room = await Room.findOne({id: member.voice.channelId}) as IRoom 
-    const value = interaction.fields.getTextInputValue(customId + 'Input')
-    if( value === '0') {
-        return await setName(member.voice.channel as VoiceChannel, member.user.username as RoomName)     
+    const room = member.voice.channel as VoiceChannel
+    const oldName = room.name as RoomName 
+    let name = interaction.fields.getTextInputValue('renameBtnInput')
+    
+    if( name === '0') {
+        name = member.user.username 
     }
-    await setName(member.voice.channel as VoiceChannel, value as RoomName)
+    await setName(member.voice.channel as VoiceChannel, name as RoomName)
+    await interaction.reply({embeds: [getNotifyEmbed(`Вы сменили название комнаты с ${oldName} на ${name}`)]})
+    setTimeout(async() => {
+        await interaction.deleteReply()
+    }, 3000);
 }
- 
+
+
+export default {
+    data: renameModal,
+    execute
+} as IModal

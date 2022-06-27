@@ -16,7 +16,6 @@ exports.deleteModerBtn = new discord_js_1.MessageButton()
     .setEmoji('988485889539862598')
     .setStyle('SECONDARY');
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
-    yield interaction.reply('delete moder');
 });
 exports.execute = execute;
 exports.default = {

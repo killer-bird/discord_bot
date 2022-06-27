@@ -2,7 +2,6 @@ import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, Mess
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
-import { getNotHaveTimeEmbed } from "../utills/getNotHaveTimeEmbed"
 
 
 
