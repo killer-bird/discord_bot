@@ -2,7 +2,6 @@ import { MessageButton, MessageActionRow, ButtonInteraction, GuildMember, VoiceC
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { UserLimit } from "../types/UserLimit"
-import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
 import { getErrEmbed } from "../embeds"
 import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
 import { limitModal } from "../modals/limitModal"

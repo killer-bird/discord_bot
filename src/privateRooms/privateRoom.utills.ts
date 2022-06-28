@@ -1,8 +1,7 @@
-import { Guild, CategoryChannel, User, VoiceChannel } from "discord.js"
+import { Guild, CategoryChannel, User, VoiceChannel, Permissions, GuildMember } from "discord.js"
 import { IRoom } from "../interfaces/IRoom"
 import { Room } from "../database/models/RoomModel"
 import { config } from "./config"
-
 
 export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel> => {
     const room = await Room.findOne({owner: user.id}) as IRoom
@@ -11,6 +10,25 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel>
         type: 'GUILD_VOICE',
         parent,
         userLimit: room.limit,
+        permissionOverwrites: [
+            ...await Promise.all(
+                room.bans.map(async id => ({
+                    id: await guild.members.fetch(id),
+                    deny: [Permissions.FLAGS.CONNECT]
+                }))
+            ),
+            ...await Promise.all(
+                room.mutes.map(async id => ({
+                    id: await guild.members.fetch(id),
+                    deny: [Permissions.FLAGS.SPEAK]
+                }))
+            ),
+            {
+                id: user,
+                allow: [ Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MUTE_MEMBERS, Permissions.FLAGS.DEAFEN_MEMBERS ]
+            }
+
+        ],
     })
     await Room.updateOne({owner: user.id}, {id: voice.id})
     config[voice.id] = false
@@ -28,5 +46,27 @@ export const deleteRoom = async (voice: VoiceChannel) :Promise<void> => {
         console.log(error)
         return
     }
+    
+}
+
+
+export const muteUser = async (channel: VoiceChannel, target: GuildMember) :Promise<void> => {
+    const afk = await target.guild.channels.fetch(process.env.AFK as string)
+    if (channel.members.has(target.user.id)) {
+        await target.voice.setChannel(afk as VoiceChannel)
+        target.voice.setMute(false)
+        await channel.permissionOverwrites.create(target.user, {"SPEAK": false})
+        await target.voice.setChannel(channel)
+        return  
+    }
+    await channel.permissionOverwrites.create(target.user, {"SPEAK": false})
+    await Room.updateOne({id: channel.id}, {$push: {mutes: target.user.id}})
+    
+}
+
+
+export const kickUser = async (target: GuildMember) :Promise<void> => {
+    const afk = await target.guild.channels.fetch(process.env.AFK as string)
+    await target.voice.setChannel(afk as VoiceChannel)
     
 }

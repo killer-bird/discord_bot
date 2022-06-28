@@ -11,22 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.muteBtn = void 0;
 const discord_js_1 = require("discord.js");
-const checkPerms_1 = require("../privateRooms/checkPerms");
-const embeds_1 = require("../embeds");
+const privateRooms_1 = require("../privateRooms");
 const RoomModel_1 = require("../database/models/RoomModel");
-const getAwaitMsgEmbed_1 = require("../utills/getAwaitMsgEmbed");
-const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
-const muteUser = (room, target) => __awaiter(void 0, void 0, void 0, function* () {
-    const afk = yield target.guild.channels.fetch(process.env.AFK);
-    if (room.members.has(target.user.id)) {
-        yield target.voice.setChannel(afk);
-        yield room.permissionOverwrites.create(target.user, { "SPEAK": false });
-        yield target.voice.setChannel(room);
-        return;
-    }
-    yield room.permissionOverwrites.create(target.user, { "SPEAK": false });
-    yield RoomModel_1.Room.updateOne({ id: room.id }, { $push: { mutes: target.user.id } });
-});
+const embeds_1 = require("../embeds");
 exports.muteBtn = new discord_js_1.MessageButton()
     .setCustomId('muteBtn')
     .setEmoji('988485884116615279')
@@ -35,14 +22,16 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a, _b;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
-    if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
-        yield interaction.reply({ embeds: [(0, getAwaitMsgEmbed_1.getAwaitMsgEmbed)("Укажите пользователя, которого необходимо выкинуть из комнаты")] });
-        const awaitMsgTimeout = setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-            yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
-            setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                yield interaction.deleteReply();
-            }), 3000);
-        }), 15000);
+    if (privateRooms_1.config[member.voice.channelId]) {
+        yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
+        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+            yield interaction.deleteReply();
+        }), 3000);
+        return;
+    }
+    if ((0, privateRooms_1.checkAdmPerms)(interaction.user, room) || (0, privateRooms_1.checkModPerms)(interaction.user, room)) {
+        privateRooms_1.config[member.voice.channelId] = true;
+        yield interaction.reply({ embeds: [(0, embeds_1.getAwaitMsgEmbed)("Укажите пользователя, которому необходимо выключить микрофон")] });
         const filter = (m) => {
             if (m.mentions.users.first()) {
                 return true;
@@ -51,29 +40,39 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         };
         try {
             const response = yield ((_a = interaction.channel) === null || _a === void 0 ? void 0 : _a.awaitMessages({ filter: filter, max: 1, time: 15000 }));
-            if (response) {
+            if (response === null || response === void 0 ? void 0 : response.size) {
                 const members = (_b = response.first()) === null || _b === void 0 ? void 0 : _b.mentions.members;
                 const target = members.first();
-                if ((0, checkPerms_1.checkAdmPerms)(target.user, room) || !(0, checkPerms_1.checkAdmPerms)(interaction.user, room) && (0, checkPerms_1.checkModPerms)(target.user, room)) {
-                    yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
+                if ((0, privateRooms_1.checkAdmPerms)(target.user, room) || !(0, privateRooms_1.checkAdmPerms)(interaction.user, room) && (0, privateRooms_1.checkModPerms)(target.user, room)) {
+                    yield (0, privateRooms_1.getNotPermsErr)(interaction);
                     return;
                 }
-                yield muteUser(member.voice.channel, target);
-                clearTimeout(awaitMsgTimeout);
-                yield interaction.deleteReply();
+                yield (0, privateRooms_1.muteUser)(member.voice.channel, target);
+                yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} замьючен. Он не больше не сможет разговаривать в вашей комнате`)] });
+                setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                    yield interaction.deleteReply();
+                }), 3000);
+                privateRooms_1.config[member.voice.channelId] = false;
+            }
+            else {
+                yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
+                setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                    yield interaction.deleteReply();
+                }), 3000);
+                privateRooms_1.config[member.voice.channelId] = false;
             }
         }
         catch (error) {
-            console.log(error);
             yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
             }), 5000);
+            privateRooms_1.config[member.voice.channelId] = false;
             return;
         }
     }
     else {
-        yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
+        yield (0, privateRooms_1.getNotPermsErr)(interaction);
     }
 });
 exports.execute = execute;

@@ -20,6 +20,7 @@ const config_1 = require("../privateRooms/config");
 const unBanUser = (channel, target) => __awaiter(void 0, void 0, void 0, function* () {
     const afk = yield target.guild.channels.fetch(process.env.AFK);
     yield channel.permissionOverwrites.create(target.user, { 'CONNECT': true });
+    yield RoomModel_1.Room.updateOne({ id: channel.id }, { $pull: { bans: target.user.id } });
     // await target.voice.setChannel(afk as VoiceChannel)
 });
 exports.unbanBtn = new discord_js_1.MessageButton()

@@ -11,6 +11,7 @@ import { config } from "../privateRooms/config"
 const unBanUser = async (channel: VoiceChannel, target: GuildMember) => {
     const afk = await target.guild.channels.fetch(process.env.AFK as string)
     await channel.permissionOverwrites.create(target.user, {'CONNECT': true})
+    await Room.updateOne({id: channel.id}, {$pull: {bans: target.user.id}})
     // await target.voice.setChannel(afk as VoiceChannel)
 }
 

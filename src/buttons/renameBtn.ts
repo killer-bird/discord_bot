@@ -1,10 +1,10 @@
-import { MessageButton, 
-         Modal, 
-         ButtonInteraction, 
-         GuildMember, 
-         VoiceChannel, 
-         TextInputComponent,
-         MessageActionRow
+import {MessageButton, 
+        Modal, 
+        ButtonInteraction, 
+        GuildMember, 
+        VoiceChannel, 
+        TextInputComponent,
+        MessageActionRow
         } from "discord.js"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces/"

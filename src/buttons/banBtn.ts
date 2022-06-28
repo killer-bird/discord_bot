@@ -1,23 +1,17 @@
 import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, MessageEmbed, Message, Collection, Snowflake } from "discord.js"
 import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
-import { getErrEmbed } from "../embeds"
+import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces/"
-import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
+import { getAwaitMsgEmbed } from "../embeds"
 import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
 import { config } from "../privateRooms/config"
 
 
-const getBanEmbed = (user: User):MessageEmbed => {
-    const banEmbed = new MessageEmbed()
-    banEmbed.setTitle("Пользователь забанен")
-    .setDescription( `Пользователь ${user} забанен. Он не больше не сможет зайти в вашу комнату` )   
-    return banEmbed
-}
-
 const banUser = async (channel: VoiceChannel, target: GuildMember) => {
     const afk = await target.guild.channels.fetch(process.env.AFK as string)
     await channel.permissionOverwrites.create(target.user, {'CONNECT': false})
+    await Room.updateOne({id: channel.id}, {$push: {bans: target.user.id}})
     if (channel.members.has(target.user.id)) {
         await target.voice.setChannel(afk as VoiceChannel)
     }
@@ -55,32 +49,39 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
             } 
 
             const response = await interaction.channel?.awaitMessages({filter: filter, max: 1, time: 15000})
+            
             if (response?.size) {
                 const members = response.first()?.mentions.members as Collection<Snowflake, GuildMember>
                 const target = members.first() as GuildMember
+                
                 if( checkAdmPerms(target.user, room) || !checkAdmPerms(interaction.user, room) && checkModPerms(target.user, room) ) {
                     config[member.voice.channelId as string] = false
                     await getNotPermsErr(interaction)
                     return
                 }
-                await banUser(member.voice.channel as VoiceChannel, target)           
+                await banUser(member.voice.channel as VoiceChannel, target)
                 config[member.voice.channelId as string] = false
+                await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} забанен. Он не больше не сможет зайти в вашу комнату`)]})           
+                setTimeout(async() => {
+                    await interaction.deleteReply()
+                }, 3000);
             } else {
-                config[member.voice.channelId as string] = false
                 await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
                 setTimeout(async() => {
                     await interaction.deleteReply() 
                 }, 3000);
+                config[member.voice.channelId as string] = false
             }
+
         } catch (error) {
-            config[member.voice.channelId as string] = false
-            console.log(123)
             await getNotPermsErr(interaction)
+            config[member.voice.channelId as string] = false
             return
         }
         
     } else {
         await getNotPermsErr(interaction)
+        config[member.voice.channelId as string] = false
     }
 }
 

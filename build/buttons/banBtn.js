@@ -14,18 +14,13 @@ const discord_js_1 = require("discord.js");
 const checkPerms_1 = require("../privateRooms/checkPerms");
 const embeds_1 = require("../embeds");
 const RoomModel_1 = require("../database/models/RoomModel");
-const getAwaitMsgEmbed_1 = require("../utills/getAwaitMsgEmbed");
+const embeds_2 = require("../embeds");
 const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
 const config_1 = require("../privateRooms/config");
-const getBanEmbed = (user) => {
-    const banEmbed = new discord_js_1.MessageEmbed();
-    banEmbed.setTitle("Пользователь забанен")
-        .setDescription(`Пользователь ${user} забанен. Он не больше не сможет зайти в вашу комнату`);
-    return banEmbed;
-};
 const banUser = (channel, target) => __awaiter(void 0, void 0, void 0, function* () {
     const afk = yield target.guild.channels.fetch(process.env.AFK);
     yield channel.permissionOverwrites.create(target.user, { 'CONNECT': false });
+    yield RoomModel_1.Room.updateOne({ id: channel.id }, { $push: { bans: target.user.id } });
     if (channel.members.has(target.user.id)) {
         yield target.voice.setChannel(afk);
     }
@@ -47,7 +42,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     }
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         config_1.config[member.voice.channelId] = true;
-        yield interaction.reply({ embeds: [(0, getAwaitMsgEmbed_1.getAwaitMsgEmbed)("забанить пользователя в комнате линканите его ниже")] });
+        yield interaction.reply({ embeds: [(0, embeds_2.getAwaitMsgEmbed)("забанить пользователя в комнате линканите его ниже")] });
         try {
             const filter = (m) => {
                 if (m.mentions.users.first()) {
@@ -66,24 +61,28 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }
                 yield banUser(member.voice.channel, target);
                 config_1.config[member.voice.channelId] = false;
-            }
-            else {
-                config_1.config[member.voice.channelId] = false;
-                yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
+                yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} забанен. Он не больше не сможет зайти в вашу комнату`)] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
                 }), 3000);
             }
+            else {
+                yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
+                setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                    yield interaction.deleteReply();
+                }), 3000);
+                config_1.config[member.voice.channelId] = false;
+            }
         }
         catch (error) {
-            config_1.config[member.voice.channelId] = false;
-            console.log(123);
             yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
+            config_1.config[member.voice.channelId] = false;
             return;
         }
     }
     else {
         yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
+        config_1.config[member.voice.channelId] = false;
     }
 });
 exports.execute = execute;

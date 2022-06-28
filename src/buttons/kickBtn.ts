@@ -1,17 +1,13 @@
 import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, Message, Collection, Snowflake } from "discord.js"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
-import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
+import { getAwaitMsgEmbed } from "../embeds"
 import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
-import { getErrEmbed } from "../embeds"
+import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
+import { config } from "../privateRooms/config"
+import { kickUser } from "../privateRooms/privateRoom.utills"
 
-
-const kickUser = async (target: GuildMember) :Promise<void> => {
-    const afk = await target.guild.channels.fetch(process.env.AFK as string)
-    await target.voice.setChannel(afk as VoiceChannel)
-    
-}
 
 export const kickBtn = new MessageButton()
     .setCustomId('kickBtn')
@@ -22,16 +18,20 @@ export const kickBtn = new MessageButton()
 
 export const execute = async (interaction: ButtonInteraction) => {
     const member = interaction.member as GuildMember
+    const voice = member.voice.channel as VoiceChannel
     const room = await Room.findOne({id: member.voice.channelId}) as IRoom
+    
+    if(config[member.voice.channelId as string]) {
+        await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
+        setTimeout( async () => {
+            await interaction.deleteReply()
+        }, 3000);
+        return
+    }
+
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
-        await interaction.reply({embeds:[getAwaitMsgEmbed("Укажите пользователя, которого необходимо замутить")]})
-        
-        const awaitMsgTimeout = setTimeout(async() => {
-            await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
-            setTimeout(async() => {
-                await interaction.deleteReply() 
-            }, 3000);
-        }, 15000);
+        config[member.voice.channelId as string] = true
+        await interaction.reply({embeds:[getAwaitMsgEmbed("Укажите пользователя, которого необходимо замутить")]})      
         
         const filter = (m: Message) => {
             if(m.mentions.users.first()) {
@@ -49,11 +49,30 @@ export const execute = async (interaction: ButtonInteraction) => {
                     await getNotPermsErr(interaction)
                     return
                 }
-                await kickUser(target)
-                clearTimeout(awaitMsgTimeout)
-                await interaction.deleteReply()
+                if( voice.members.find(member => member.id === target.id)){
+                    await kickUser(target)
+                    config[member.voice.channelId as string] = false
+                    await interaction.editReply({embeds:[getNotifyEmbed(`Вы кикнули ${target} из комнаты`)]})
+                    setTimeout(async() => {
+                        await interaction.deleteReply()                  
+                    }, 3000);
+                }else {
+                    config[member.voice.channelId as string] = false
+                    await interaction.editReply({embeds:[getErrEmbed(`Сейчас ${target} не находится в комнате!`)]})
+                    setTimeout(async() => {
+                        await interaction.deleteReply()                  
+                    }, 3000);
+                }
+                
+            }else {
+                config[member.voice.channelId as string] = false
+                await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
+                setTimeout(async() => {
+                    await interaction.deleteReply() 
+                }, 3000);
             }
         } catch (error) {
+            config[member.voice.channelId as string] = false
             console.log(error)
             await interaction.editReply({embeds: [getErrEmbed("Произошла ошибка. Попробуйте еще раз")]})
             setTimeout( async () => {

@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.unlockBtn = void 0;
 const discord_js_1 = require("discord.js");
 const RoomModel_1 = require("../database/models/RoomModel");
+const checkPerms_1 = require("../privateRooms/checkPerms");
+const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
 const getUnlockRoomEmbed = () => {
     const unlockRoomEmbed = new discord_js_1.MessageEmbed()
         .setTitle("Комната открыта")
@@ -26,12 +28,15 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
-    if ((room === null || room === void 0 ? void 0 : room.owner) === interaction.user.id) {
+    if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         (_a = member.voice.channel) === null || _a === void 0 ? void 0 : _a.permissionOverwrites.create(member.voice.channel.guild.roles.everyone, { "CONNECT": true });
         yield interaction.reply({ embeds: [getUnlockRoomEmbed()] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
         }), 5000);
+    }
+    else {
+        yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
     }
 });
 exports.execute = execute;

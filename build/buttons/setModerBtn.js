@@ -11,12 +11,72 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.setModerBtn = void 0;
 const discord_js_1 = require("discord.js");
+const RoomModel_1 = require("../database/models/RoomModel");
+const embeds_1 = require("../embeds");
+const checkPerms_1 = require("../privateRooms/checkPerms");
+const embeds_2 = require("../embeds");
+const config_1 = require("../privateRooms/config");
+const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
+const setModer = (room, target) => __awaiter(void 0, void 0, void 0, function* () {
+    yield RoomModel_1.Room.updateOne({ id: room.id }, { $push: { moderators: target.user.id } });
+});
 exports.setModerBtn = new discord_js_1.MessageButton()
     .setCustomId('setModerBtn')
     .setEmoji('988485887165878283')
     .setStyle('SECONDARY');
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
-    yield interaction.reply('setModer');
+    var _a, _b;
+    const member = interaction.member;
+    const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
+    if (config_1.config[member.voice.channelId]) {
+        yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
+        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+            yield interaction.deleteReply();
+        }), 3000);
+        return;
+    }
+    if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room)) {
+        config_1.config[member.voice.channelId] = true;
+        yield interaction.reply({ embeds: [(0, embeds_2.getAwaitMsgEmbed)("назначить пользователя модератором в комнате линканите его ниже")] });
+        const filter = (m) => {
+            if (m.mentions.users.first()) {
+                return true;
+            }
+            return false;
+        };
+        const response = yield ((_a = interaction.channel) === null || _a === void 0 ? void 0 : _a.awaitMessages({ filter: filter, max: 1, time: 15000 }));
+        if (response === null || response === void 0 ? void 0 : response.size) {
+            const members = (_b = response.first()) === null || _b === void 0 ? void 0 : _b.mentions.members;
+            const target = members.first();
+            if ((0, checkPerms_1.checkModPerms)(target.user, room)) {
+                yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)(`Пользователь ${target} уже модератор!`)] });
+                setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                    yield interaction.deleteReply();
+                    config_1.config[member.voice.channelId] = false;
+                }), 3000);
+                return;
+            }
+            config_1.config[member.voice.channelId] = false;
+            yield setModer(member.voice.channel, target);
+            yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы назначили ${target} модератором комнаты.`)] });
+            setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                yield interaction.deleteReply();
+                config_1.config[member.voice.channelId] = false;
+            }), 3000);
+        }
+        else {
+            yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
+            setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                yield interaction.deleteReply();
+                config_1.config[member.voice.channelId] = false;
+            }), 3000);
+            config_1.config[member.voice.channelId] = false;
+        }
+    }
+    else {
+        yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
+        config_1.config[member.voice.channelId] = false;
+    }
 });
 exports.execute = execute;
 exports.default = {

@@ -1,6 +1,8 @@
 import { MessageButton, ButtonInteraction, GuildMember, MessageEmbed } from "discord.js"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
+import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
+import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
 
 const getUnlockRoomEmbed = (): MessageEmbed => {
     const unlockRoomEmbed = new MessageEmbed()
@@ -16,17 +18,18 @@ export const unlockBtn = new MessageButton()
     .setStyle("SECONDARY")
 
 
-
 export const execute = async ( interaction: ButtonInteraction) => {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: member.voice.channelId}) as IRoom
 
-    if( room?.owner === interaction.user.id ) {
+    if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"CONNECT": true})
         await interaction.reply({embeds: [getUnlockRoomEmbed()]})
         setTimeout( async () => {
             await interaction.deleteReply()
         }, 5000);
+    } else {
+        await getNotPermsErr(interaction)
     }
 }
 
