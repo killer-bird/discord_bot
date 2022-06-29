@@ -32,9 +32,14 @@ const getRoomSettingsEmbed = () => {
     return roomSettingsEmbed;
 };
 const createRoomSettingsMsg = (textChannel) => __awaiter(void 0, void 0, void 0, function* () {
-    yield textChannel.send({
-        embeds: [getRoomSettingsEmbed()],
-        components: [components_1.btnRowHigh, components_1.btnRowLow]
-    });
+    try {
+        yield textChannel.send({
+            embeds: [getRoomSettingsEmbed()],
+            components: [components_1.btnRowHigh, components_1.btnRowMiddle, components_1.btnRowLow]
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
 });
 exports.createRoomSettingsMsg = createRoomSettingsMsg;

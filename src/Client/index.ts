@@ -7,6 +7,7 @@ import { ICommand, IEvent, IButton, IModal } from "../interfaces/"
 
 export default class ExtendedClient extends Client {
     
+    
     public commands: Collection<string, ICommand> = new Collection()
     public events: Collection<string, IEvent> = new Collection()
     public buttons: Collection<string, IButton> = new Collection()

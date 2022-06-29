@@ -19,7 +19,7 @@ const newRoom = (member) => __awaiter(void 0, void 0, void 0, function* () {
         mutes: [],
         bans: [],
         moderators: [],
-        limit: undefined
+        limit: null
     };
     yield new RoomModel_1.Room(roomObject).save();
 });

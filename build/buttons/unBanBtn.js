@@ -14,7 +14,6 @@ const discord_js_1 = require("discord.js");
 const checkPerms_1 = require("../privateRooms/checkPerms");
 const embeds_1 = require("../embeds");
 const RoomModel_1 = require("../database/models/RoomModel");
-const getAwaitMsgEmbed_1 = require("../utills/getAwaitMsgEmbed");
 const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
 const config_1 = require("../privateRooms/config");
 const unBanUser = (channel, target) => __awaiter(void 0, void 0, void 0, function* () {
@@ -40,7 +39,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         config_1.config[member.voice.channelId] = true;
-        yield interaction.reply({ embeds: [(0, getAwaitMsgEmbed_1.getAwaitMsgEmbed)("разбанить пользователя в комнате линканите его ниже")] });
+        yield interaction.reply({ embeds: [(0, embeds_1.getAwaitMsgEmbed)("разбанить пользователя в комнате линканите его ниже")] });
         try {
             const filter = (m) => {
                 if (m.mentions.users.first()) {

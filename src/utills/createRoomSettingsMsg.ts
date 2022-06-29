@@ -1,5 +1,5 @@
 import { TextChannel, MessageEmbed } from "discord.js"
-import { btnRowLow, btnRowHigh } from "../components"
+import { btnRowLow, btnRowHigh, btnRowMiddle } from "../components"
 
 
 const getRoomSettingsEmbed = ():MessageEmbed => {
@@ -26,8 +26,13 @@ const getRoomSettingsEmbed = ():MessageEmbed => {
 
 
 export const createRoomSettingsMsg = async (textChannel: TextChannel) :Promise<void> => {
-    await textChannel.send({
-        embeds: [ getRoomSettingsEmbed() ],
-        components: [ btnRowHigh, btnRowLow ]
-    })
+    try {
+        await textChannel.send({
+            embeds: [ getRoomSettingsEmbed() ],
+            components: [ btnRowHigh,btnRowMiddle, btnRowLow ]
+        })
+    } catch (error) {
+        console.log(error)
+    }
+    
 }

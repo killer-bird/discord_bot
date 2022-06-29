@@ -2,7 +2,7 @@ import { Message } from "discord.js"
 import { IEvent } from "../interfaces/IEvents"
 
 
-const onMessage = async (message: Message) => {
+const onMessage = async (message: Message) => { 
 }
 
 

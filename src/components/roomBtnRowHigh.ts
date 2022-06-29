@@ -4,7 +4,6 @@ import { renameBtn } from "../buttons/renameBtn"
 import { lockBtn } from "../buttons/lockBtn"
 import { unlockBtn } from "../buttons/unlockBtn"
 import { banBtn } from "../buttons/banBtn"
-import { unbanBtn } from "../buttons/unbanBtn"
 
 export const btnRowHigh = new MessageActionRow()
 .addComponents( 

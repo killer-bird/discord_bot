@@ -11,5 +11,5 @@ export interface IRoom {
     mutes: UserId[];
     bans: UserId[];
     moderators: UserId[];
-    limit: UserLimit | undefined;
+    limit: UserLimit | null;
 }

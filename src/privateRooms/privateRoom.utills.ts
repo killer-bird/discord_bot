@@ -1,15 +1,19 @@
-import { Guild, CategoryChannel, User, VoiceChannel, Permissions, GuildMember } from "discord.js"
+import { Guild, CategoryChannel, User, VoiceChannel, TextChannel, Permissions, GuildMember } from "discord.js"
 import { IRoom } from "../interfaces/IRoom"
+import { UserLimit } from "../types/UserLimit"
 import { Room } from "../database/models/RoomModel"
 import { config } from "./config"
+import { createRoomSettingsMsg } from "../utills"
+
 
 export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel> => {
     const room = await Room.findOne({owner: user.id}) as IRoom
     const parent = await guild.channels.fetch(process.env.PARENT_CATEGORY as string) as CategoryChannel
+    console.log("CREATE ROOM INTO FUNC", room.limit)
     const voice =  await guild.channels.create(room.name, {
         type: 'GUILD_VOICE',
         parent,
-        userLimit: room.limit,
+        userLimit: room.limit as UserLimit,
         permissionOverwrites: [
             ...await Promise.all(
                 room.bans.map(async id => ({
@@ -23,13 +27,32 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel>
                     deny: [Permissions.FLAGS.SPEAK]
                 }))
             ),
+            ...await Promise.all(
+                room.moderators.map(async id => ({
+                    id: await guild.members.fetch(id),
+                    allow: [
+                            Permissions.FLAGS.MANAGE_CHANNELS, 
+                            Permissions.FLAGS.MUTE_MEMBERS, 
+                            Permissions.FLAGS.DEAFEN_MEMBERS,
+                            Permissions.FLAGS.MANAGE_ROLES
+                            ]
+                }))
+            ),
             {
                 id: user,
-                allow: [ Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MUTE_MEMBERS, Permissions.FLAGS.DEAFEN_MEMBERS ]
+                allow: [
+                        Permissions.FLAGS.MANAGE_CHANNELS, 
+                        Permissions.FLAGS.MUTE_MEMBERS, 
+                        Permissions.FLAGS.DEAFEN_MEMBERS,
+                        Permissions.FLAGS.MANAGE_ROLES
+                        ]
             }
 
         ],
     })
+
+    const textChannel = await guild.channels.fetch(voice.id) as TextChannel
+    await createRoomSettingsMsg(textChannel)
     await Room.updateOne({owner: user.id}, {id: voice.id})
     config[voice.id] = false
     return voice
@@ -38,12 +61,10 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel>
 export const deleteRoom = async (voice: VoiceChannel) :Promise<void> => {
     try {
         if (!voice.members.size) {
-            await Room.updateOne({ id: voice.id }, { id: null })
             delete config[voice.id]
             await voice.delete()
         }     
     } catch (error) {
-        console.log(error)
         return
     }
     
@@ -68,5 +89,20 @@ export const muteUser = async (channel: VoiceChannel, target: GuildMember) :Prom
 export const kickUser = async (target: GuildMember) :Promise<void> => {
     const afk = await target.guild.channels.fetch(process.env.AFK as string)
     await target.voice.setChannel(afk as VoiceChannel)
+    
+}
+
+export const unMuteUser = async (room: VoiceChannel, target: GuildMember) :Promise<void> => {
+    const afk = await target.guild.channels.fetch(process.env.AFK as string)
+    const roomModel = Room.findOne({id: room.id})
+    if (room.members.has(target.user.id)) {
+        await target.voice.setChannel(afk as VoiceChannel)
+        await room.permissionOverwrites.create(target.user, {"SPEAK": true})
+        await target.voice.setChannel(room)
+        await Room.updateOne({id: room.id}, {$pull: {mutes: target.user.id}})
+        return  
+    } 
+    await room.permissionOverwrites.create(target.user, {"SPEAK": true}) 
+    await Room.updateOne({id: room.id}, {$pull: {mutes: target.user.id}})
     
 }

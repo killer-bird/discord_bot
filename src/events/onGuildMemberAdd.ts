@@ -6,7 +6,7 @@ import { IEvent } from "../interfaces/IEvents"
 
 
 
-const guildMemberAdd = async (member: GuildMember) => {
+const onGuildMemberAdd = async (member: GuildMember) => {
 
     const oldUser = await User.findOne({id: member.user.id})
     if( oldUser ) {
@@ -40,5 +40,5 @@ const guildMemberAdd = async (member: GuildMember) => {
 
 export default {
     name: 'guildMemberAdd',
-    run: guildMemberAdd
+    run: onGuildMemberAdd
 } as IEvent

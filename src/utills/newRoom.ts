@@ -13,7 +13,7 @@ export const newRoom = async (member: GuildMember) => {
         mutes: [],
         bans: [],
         moderators: [],
-        limit: undefined
+        limit: null
     }
 
     await new Room(roomObject).save()

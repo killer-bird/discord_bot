@@ -1,9 +1,8 @@
 import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, MessageEmbed, Message, Collection, Snowflake } from "discord.js"
 import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
-import { getErrEmbed } from "../embeds"
+import { getErrEmbed, getAwaitMsgEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
-import { getAwaitMsgEmbed } from "../utills/getAwaitMsgEmbed"
 import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
 import { config } from "../privateRooms/config"
 

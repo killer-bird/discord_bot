@@ -1,28 +1,13 @@
 import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, Message, Collection, Snowflake } from "discord.js"
-import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
+import { checkAdmPerms, checkModPerms, config, getNotPermsErr, unMuteUser } from "../privateRooms/"
 import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { getAwaitMsgEmbed } from "../embeds"
-import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
-import { config } from "../privateRooms/config"
 
 
 
-const unMuteUser = async (room: VoiceChannel, target: GuildMember) :Promise<void> => {
-    const afk = await target.guild.channels.fetch(process.env.AFK as string)
-    const roomModel = Room.findOne({id: room.id})
-    if (room.members.has(target.user.id)) {
-        await target.voice.setChannel(afk as VoiceChannel)
-        await room.permissionOverwrites.create(target.user, {"SPEAK": true})
-        await target.voice.setChannel(room)
-        await Room.updateOne({id: room.id}, {$pull: {mutes: target.user.id}})
-        return  
-    } 
-    await room.permissionOverwrites.create(target.user, {"SPEAK": true}) 
-    await Room.updateOne({id: room.id}, {$pull: {mutes: target.user.id}})
-    
-}
+
 
 export const unmuteBtn = new MessageButton()
     .setCustomId('unmuteBtn')
