@@ -14,12 +14,6 @@ const discord_js_1 = require("discord.js");
 const RoomModel_1 = require("../database/models/RoomModel");
 const checkPerms_1 = require("../privateRooms/checkPerms");
 const embeds_1 = require("../embeds");
-const getlockRoomEmbed = () => {
-    const lockRoomEmbed = new discord_js_1.MessageEmbed();
-    lockRoomEmbed.setTitle("Вы закрыли комнату")
-        .setDescription("Теперь никто к не сможет к вам зайти");
-    return lockRoomEmbed;
-};
 exports.lockBtn = new discord_js_1.MessageButton()
     .setCustomId("lockBtn")
     .setEmoji('988485871248494662')
@@ -27,10 +21,10 @@ exports.lockBtn = new discord_js_1.MessageButton()
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const member = interaction.member;
-    const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
+    const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         (_a = member.voice.channel) === null || _a === void 0 ? void 0 : _a.permissionOverwrites.create(member.voice.channel.guild.roles.everyone, { "CONNECT": false });
-        yield interaction.reply({ embeds: [getlockRoomEmbed()] });
+        yield interaction.reply({ embeds: [(0, embeds_1.getNotifyEmbed)("Вы закрыли комнату. Никто не сможет к вам зайти")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
         }), 5000);

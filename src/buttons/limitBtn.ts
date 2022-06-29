@@ -8,14 +8,11 @@ import { limitModal } from "../modals/limitModal"
 
 
 const setLimit = async (room : VoiceChannel, limit: UserLimit) => {
-    console.log(limit)
     if(limit === 0) {
         await room.edit({userLimit: 0})
-        await Room.updateOne({id: room.id}, {limit: undefined})
         return
     }
     await room.edit({userLimit: limit})
-    await Room.updateOne({id: room.id}, {limit})
 }
 
 
@@ -31,7 +28,7 @@ export const data = new MessageActionRow()
 
 export const execute = async (interaction: ButtonInteraction):Promise<void> => {
     const member = interaction.member as GuildMember
-    const room = await Room.findOne({id: member.voice.channelId}) as IRoom
+    const room = await Room.findOne({id: interaction.channelId}) as IRoom
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         interaction.showModal(limitModal)
     } else {

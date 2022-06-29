@@ -29,7 +29,7 @@ export const setModerBtn = new MessageButton()
 
 export const execute = async ( interaction: ButtonInteraction) => {
     const member = interaction.member as GuildMember
-    const room = await Room.findOne({id: member.voice.channelId}) as IRoom
+    const room = await Room.findOne({id: interaction.channelId}) as IRoom
     
     if(config[member.voice.channelId as string]) {
         await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})

@@ -1,0 +1,8 @@
+
+
+export default {
+    name: "debug",
+    run: async (message: string) =>{
+        console.log(message)
+    }
+}

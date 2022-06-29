@@ -14,8 +14,9 @@ export const muteHandler = async (voiceState: VoiceState, mute: boolean) => {
     if(mute){
         await muteUser(voiceState.channel as VoiceChannel, member)
         console.log("mute")
-    }else {
-        console.log("unmute")
-        await unMuteUser(voiceState.channel as VoiceChannel, member)
-    }
+        return
+    } 
+    console.log("unmute")
+    await unMuteUser(voiceState.channel as VoiceChannel, member)
+    
 }

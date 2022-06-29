@@ -2,14 +2,8 @@ import { MessageButton, ButtonInteraction, GuildMember, MessageEmbed } from "dis
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
-import { getErrEmbed } from "../embeds"
+import { getErrEmbed, getNotifyEmbed } from "../embeds"
 
-const getlockRoomEmbed = () : MessageEmbed => {
-    const lockRoomEmbed = new MessageEmbed()
-    lockRoomEmbed.setTitle("Вы закрыли комнату")
-    .setDescription("Теперь никто к не сможет к вам зайти")
-    return lockRoomEmbed
-}
 
 export const lockBtn = new MessageButton()
     .setCustomId("lockBtn")
@@ -19,11 +13,11 @@ export const lockBtn = new MessageButton()
 
 export const execute = async(interaction: ButtonInteraction): Promise<void> => {
     const member = interaction.member as GuildMember
-    const room = await Room.findOne({id: member.voice.channelId}) as IRoom
+    const room = await Room.findOne({id: interaction.channelId}) as IRoom
 
     if(checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"CONNECT": false})
-        await interaction.reply({embeds: [getlockRoomEmbed()]})
+        await interaction.reply({embeds: [getNotifyEmbed("Вы закрыли комнату. Никто не сможет к вам зайти")]})
         setTimeout( async () => {
             await interaction.deleteReply()
         }, 5000);

@@ -30,7 +30,7 @@ export const limitModal = new Modal()
 
 export const execute = async (interaction: ModalSubmitInteraction) => {
     const member = interaction.member as GuildMember
-    const room = member.voice.channel as VoiceChannel
+    const room = interaction.channel as VoiceChannel
     const oldLimit = room.userLimit
 
     const limit = Number(interaction.fields.getTextInputValue('limitBtnInput'))

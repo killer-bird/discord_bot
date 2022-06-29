@@ -21,7 +21,7 @@ exports.muteBtn = new discord_js_1.MessageButton()
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const member = interaction.member;
-    const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
+    const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
     if (privateRooms_1.config[member.voice.channelId]) {
         yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {

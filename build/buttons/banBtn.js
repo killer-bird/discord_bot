@@ -11,20 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.banBtn = void 0;
 const discord_js_1 = require("discord.js");
-const checkPerms_1 = require("../privateRooms/checkPerms");
+const privateRooms_1 = require("../privateRooms");
 const embeds_1 = require("../embeds");
 const RoomModel_1 = require("../database/models/RoomModel");
 const embeds_2 = require("../embeds");
-const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
-const config_1 = require("../privateRooms/config");
-const banUser = (channel, target) => __awaiter(void 0, void 0, void 0, function* () {
-    const afk = yield target.guild.channels.fetch(process.env.AFK);
-    yield channel.permissionOverwrites.create(target.user, { 'CONNECT': false });
-    yield RoomModel_1.Room.updateOne({ id: channel.id }, { $push: { bans: target.user.id } });
-    if (channel.members.has(target.user.id)) {
-        yield target.voice.setChannel(afk);
-    }
-});
 exports.banBtn = new discord_js_1.MessageButton()
     .setCustomId('banBtn')
     .setEmoji('988485878743711774')
@@ -32,16 +22,16 @@ exports.banBtn = new discord_js_1.MessageButton()
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const member = interaction.member;
-    const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
-    if (config_1.config[member.voice.channelId]) {
+    const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
+    if (privateRooms_1.config[member.voice.channelId]) {
         yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
         }), 3000);
         return;
     }
-    if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
-        config_1.config[member.voice.channelId] = true;
+    if ((0, privateRooms_1.checkAdmPerms)(interaction.user, room) || (0, privateRooms_1.checkModPerms)(interaction.user, room)) {
+        privateRooms_1.config[member.voice.channelId] = true;
         yield interaction.reply({ embeds: [(0, embeds_2.getAwaitMsgEmbed)("забанить пользователя в комнате линканите его ниже")] });
         try {
             const filter = (m) => {
@@ -54,13 +44,13 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             if (response === null || response === void 0 ? void 0 : response.size) {
                 const members = (_b = response.first()) === null || _b === void 0 ? void 0 : _b.mentions.members;
                 const target = members.first();
-                if ((0, checkPerms_1.checkAdmPerms)(target.user, room) || !(0, checkPerms_1.checkAdmPerms)(interaction.user, room) && (0, checkPerms_1.checkModPerms)(target.user, room)) {
-                    config_1.config[member.voice.channelId] = false;
-                    yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
+                if ((0, privateRooms_1.checkAdmPerms)(target.user, room) || !(0, privateRooms_1.checkAdmPerms)(interaction.user, room) && (0, privateRooms_1.checkModPerms)(target.user, room)) {
+                    privateRooms_1.config[member.voice.channelId] = false;
+                    yield (0, privateRooms_1.getNotPermsErr)(interaction);
                     return;
                 }
-                yield banUser(member.voice.channel, target);
-                config_1.config[member.voice.channelId] = false;
+                yield (0, privateRooms_1.banUser)(member.voice.channel, target);
+                privateRooms_1.config[member.voice.channelId] = false;
                 yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} забанен. Он не больше не сможет зайти в вашу комнату`)] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
@@ -71,18 +61,18 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
                 }), 3000);
-                config_1.config[member.voice.channelId] = false;
+                privateRooms_1.config[member.voice.channelId] = false;
             }
         }
         catch (error) {
-            yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
-            config_1.config[member.voice.channelId] = false;
+            yield (0, privateRooms_1.getNotPermsErr)(interaction);
+            privateRooms_1.config[member.voice.channelId] = false;
             return;
         }
     }
     else {
-        yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
-        config_1.config[member.voice.channelId] = false;
+        yield (0, privateRooms_1.getNotPermsErr)(interaction);
+        privateRooms_1.config[member.voice.channelId] = false;
     }
 });
 exports.execute = execute;

@@ -2,7 +2,7 @@ import { VoiceState, GuildMember, VoiceChannel } from "discord.js";
 import { createRoom, deleteRoom } from "../privateRooms/privateRoom.utills";
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IEvent } from "../interfaces"
-import { muteHandler } from "../privateRooms"
+import { muteHandler, banHandler } from "../privateRooms"
 
 
 const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) => {
@@ -32,19 +32,6 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
 
     if( oldState.channelId !== process.env.CREATE_ROOM && newState.channelId === process.env.CREATE_ROOM ) {
                 
-        // if (room?.id) {
-        //     console.log("if room.id")
-        //     try {
-        //         const voice  = await newState.guild.channels.fetch(room.id)
-        //         await newState.member?.voice.setChannel(voice as VoiceChannel)
-        //     } catch (error) {  
-        //         console.log(error)
-        //         const voice =  await createRoom(member.user, newState.guild)
-        //         await newState.member?.voice.setChannel(voice)
-        //     } 
-        //     return
-        // }
-
         console.log("CREATE ROOM INTO EVENT")
         const voice =  await createRoom(member.user, newState.guild)
         await newState.member?.voice.setChannel(voice)
@@ -58,12 +45,26 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
             if(!room) {
                 return
             }
+
+        //MUTE
         if(newState.serverMute) {
+            console.log("MUTE")
             await muteHandler(newState, true)
         }
-        if(!newState.serverMute) {
+        //UNMUTE
+        if(oldState.suppress && !newState.suppress && !oldState.serverMute) {
+            console.log("UNMUTE")
             await muteHandler(newState, false)
         }
+        //BAN
+        if(newState.serverDeaf) {
+            console.log("Deaf");
+            await banHandler(newState, true)
+        }
+        // if(oldState.serverDeaf && !newState.serverDeaf) {
+        //     console.log("unDeaf");
+        //     // await banHandler(newState, false)
+        // }
     }
     
 }

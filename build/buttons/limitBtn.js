@@ -16,14 +16,11 @@ const embeds_1 = require("../embeds");
 const checkPerms_1 = require("../privateRooms/checkPerms");
 const limitModal_1 = require("../modals/limitModal");
 const setLimit = (room, limit) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(limit);
     if (limit === 0) {
         yield room.edit({ userLimit: 0 });
-        yield RoomModel_1.Room.updateOne({ id: room.id }, { limit: undefined });
         return;
     }
     yield room.edit({ userLimit: limit });
-    yield RoomModel_1.Room.updateOne({ id: room.id }, { limit });
 });
 exports.limitBtn = new discord_js_1.MessageButton()
     .setCustomId('limitBtn')
@@ -33,7 +30,7 @@ exports.data = new discord_js_1.MessageActionRow()
     .addComponents(exports.limitBtn);
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
     const member = interaction.member;
-    const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
+    const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         interaction.showModal(limitModal_1.limitModal);
     }

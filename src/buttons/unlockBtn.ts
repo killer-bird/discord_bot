@@ -20,7 +20,7 @@ export const unlockBtn = new MessageButton()
 
 export const execute = async ( interaction: ButtonInteraction) => {
     const member = interaction.member as GuildMember
-    const room = await Room.findOne({id: member.voice.channelId}) as IRoom
+    const room = await Room.findOne({id: interaction.channelId}) as IRoom
 
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"CONNECT": true})

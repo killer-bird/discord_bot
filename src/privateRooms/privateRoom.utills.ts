@@ -44,7 +44,9 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel>
                         Permissions.FLAGS.MANAGE_CHANNELS, 
                         Permissions.FLAGS.MUTE_MEMBERS, 
                         Permissions.FLAGS.DEAFEN_MEMBERS,
-                        Permissions.FLAGS.MANAGE_ROLES
+                        Permissions.FLAGS.MANAGE_ROLES,
+                        Permissions.FLAGS.READ_MESSAGE_HISTORY,
+                        Permissions.FLAGS.VIEW_CHANNEL
                         ]
             }
 
@@ -96,6 +98,7 @@ export const unMuteUser = async (room: VoiceChannel, target: GuildMember) :Promi
     const afk = await target.guild.channels.fetch(process.env.AFK as string)
     const roomModel = Room.findOne({id: room.id})
     if (room.members.has(target.user.id)) {
+        console.log("UNMUTE IT HAS")
         await target.voice.setChannel(afk as VoiceChannel)
         await room.permissionOverwrites.create(target.user, {"SPEAK": true})
         await target.voice.setChannel(room)
@@ -105,4 +108,19 @@ export const unMuteUser = async (room: VoiceChannel, target: GuildMember) :Promi
     await room.permissionOverwrites.create(target.user, {"SPEAK": true}) 
     await Room.updateOne({id: room.id}, {$pull: {mutes: target.user.id}})
     
+}
+
+export const banUser = async (channel: VoiceChannel, target: GuildMember) => {
+    const afk = await target.guild.channels.fetch(process.env.AFK as string)
+    await channel.permissionOverwrites.create(target.user, {'CONNECT': false})
+    if (channel.members.has(target.user.id)) {
+        await target.voice.setChannel(afk as VoiceChannel)
+    }
+    await target.voice.setDeaf(false)
+    
+}
+
+export const  unBanUser = async (channel: VoiceChannel, target: GuildMember) => {
+    await channel.permissionOverwrites.create(target.user, {'CONNECT': true})
+    await Room.updateOne({id: channel.id}, {$pull: {bans: target.user.id}})
 }

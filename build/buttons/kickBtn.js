@@ -26,7 +26,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a, _b;
     const member = interaction.member;
     const voice = member.voice.channel;
-    const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
+    const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
     if (config_1.config[member.voice.channelId]) {
         yield interaction.reply({ embeds: [(0, embeds_2.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {

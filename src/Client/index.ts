@@ -21,6 +21,8 @@ export default class ExtendedClient extends Client {
             intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES", "GUILD_MEMBERS", "GUILD_VOICE_STATES"]
         })
     }
+
+    
     public async init() {    
         this.login(this.token)
         await connect(this.mongoUri)

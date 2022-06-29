@@ -1,22 +1,11 @@
 import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, MessageEmbed, Message, Collection, Snowflake } from "discord.js"
-import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
+import { checkAdmPerms, checkModPerms, getNotPermsErr, banUser, config } from "../privateRooms"
 import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces/"
 import { getAwaitMsgEmbed } from "../embeds"
-import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
-import { config } from "../privateRooms/config"
 
 
-const banUser = async (channel: VoiceChannel, target: GuildMember) => {
-    const afk = await target.guild.channels.fetch(process.env.AFK as string)
-    await channel.permissionOverwrites.create(target.user, {'CONNECT': false})
-    await Room.updateOne({id: channel.id}, {$push: {bans: target.user.id}})
-    if (channel.members.has(target.user.id)) {
-        await target.voice.setChannel(afk as VoiceChannel)
-    }
-    
-}
 
 
 export const banBtn = new MessageButton()
@@ -27,7 +16,7 @@ export const banBtn = new MessageButton()
 
 export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
     const member = interaction.member as GuildMember
-    const room = await Room.findOne({id: member.voice.channelId}) as IRoom
+    const room = await Room.findOne({id: interaction.channelId}) as IRoom
     
     if(config[member.voice.channelId as string]) {
         await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})

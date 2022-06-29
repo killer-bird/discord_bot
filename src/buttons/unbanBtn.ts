@@ -1,18 +1,10 @@
 import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, MessageEmbed, Message, Collection, Snowflake } from "discord.js"
-import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
+import { checkAdmPerms, checkModPerms, unBanUser, getNotPermsErr, config } from "../privateRooms"
 import { getErrEmbed, getAwaitMsgEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
-import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
-import { config } from "../privateRooms/config"
 
 
-const unBanUser = async (channel: VoiceChannel, target: GuildMember) => {
-    const afk = await target.guild.channels.fetch(process.env.AFK as string)
-    await channel.permissionOverwrites.create(target.user, {'CONNECT': true})
-    await Room.updateOne({id: channel.id}, {$pull: {bans: target.user.id}})
-    // await target.voice.setChannel(afk as VoiceChannel)
-}
 
 export const unbanBtn = new MessageButton()
     .setCustomId("unbanBtn")
@@ -32,7 +24,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void> => 
         return
     }
 
-    const room = await Room.findOne({id: member.voice.channelId}) as IRoom
+    const room = await Room.findOne({id: interaction.channelId}) as IRoom
     
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         config[member.voice.channelId as string] = true

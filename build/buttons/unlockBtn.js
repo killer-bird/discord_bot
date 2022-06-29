@@ -27,7 +27,7 @@ exports.unlockBtn = new discord_js_1.MessageButton()
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const member = interaction.member;
-    const room = yield RoomModel_1.Room.findOne({ id: member.voice.channelId });
+    const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         (_a = member.voice.channel) === null || _a === void 0 ? void 0 : _a.permissionOverwrites.create(member.voice.channel.guild.roles.everyone, { "CONNECT": true });
         yield interaction.reply({ embeds: [getUnlockRoomEmbed()] });

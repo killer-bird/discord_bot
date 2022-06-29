@@ -24,7 +24,7 @@ const onInteractionCreate = async (interaction: CommandInteraction) => {
         const customId = interaction.customId
         const button = client.buttons.get(customId) as IButton
         try {
-            console.log(interaction.id)
+            console.log(interaction.channelId)
             await button.execute(interaction)
         } catch (error) {
             console.log(error)

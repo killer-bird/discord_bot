@@ -5,9 +5,7 @@ import { RoomName } from "../types/RoomName"
 import { getNotifyEmbed } from "../embeds"
 
 const setName = async (room: VoiceChannel, name: RoomName) :Promise<void> => {
-    console.log(name)
     await room.edit({name: name})
-    await Room.updateOne({id: room.id}, {name: name})
 }
 
 export const renameModal = new Modal()
@@ -23,9 +21,10 @@ export const renameModal = new Modal()
     renameModal.addComponents(row)
 
 
+
 export const execute = async (interaction:ModalSubmitInteraction) => {
     const member = interaction.member as GuildMember
-    const room = member.voice.channel as VoiceChannel
+    const room = interaction.channel as VoiceChannel
     const oldName = room.name as RoomName 
     let name = interaction.fields.getTextInputValue('renameBtnInput')
     

@@ -27,7 +27,7 @@ export const renameBtn = new MessageButton()
 
 export const execute = async (interaction: ButtonInteraction): Promise<void> => {   
     const member = interaction.member as GuildMember
-    const room = await Room.findOne({id: member.voice.channelId}) as IRoom
+    const room = await Room.findOne({id: interaction.channelId}) as IRoom
     
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         const renameModal = new Modal()
@@ -43,56 +43,6 @@ export const execute = async (interaction: ButtonInteraction): Promise<void> => 
         renameModal.addComponents(row)
         interaction.showModal(renameModal)
         
-        
-        // const renameModal = getModal({
-        //     id: 'renameBtn',
-        //     title: 'Переименовать комнату',
-        //     inputId: 'renameBtnInput',
-        //     label: 'Введите новое имя, чтобы сбросить введите 0',
-        //     placeholder: member.voice.channel?.name    
-        // })
-        
-        // showModal(renameModal, {
-        //     interaction, client
-        // })
-        // await interaction.reply({embeds:[getAwaitMsgEmbed("установить новое название для комнаты (Введите 0, для того чтобы вернуть название по умолчанию)")]})       
-        // const awaitMsgTimeout = setTimeout(async() => {
-        //     await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
-        //     try {
-        //         setTimeout(async() => {
-        //             await interaction.deleteReply() 
-        //         }, 3000);
-        //     } catch (error) {
-        //         console.log(error)
-        //         return
-        //     }
-        // }, 15000);
-
-        // try {
-        //     const filter = (m: Message) => {
-        //         console.log(m.author.id, member.user.id, m.author.id === member.user.id)
-        //         return m.author.id === member.user.id
-        //     }
-        //     const response = await interaction.channel?.awaitMessages({filter, max: 1, time: 15000})
-        //     if (response) {
-        //         if( response.first()?.content === '0' ) {
-        //             await setName(member.voice.channel as VoiceChannel, member.user.username as RoomName )
-        //             clearTimeout(awaitMsgTimeout)
-        //             await interaction.deleteReply()
-        //             return
-        //         }
-        //         await setName(member.voice.channel as VoiceChannel, response.first()?.content as RoomName )
-        //         clearTimeout(awaitMsgTimeout)
-        //         await interaction.deleteReply()
-        //     }
-        // } catch (error) {
-        //     console.log(error)
-        //     await interaction.reply({embeds: [getErrEmbed("Произошла ошибка. Попробуйте еще раз")]})
-        //     setTimeout( async () => {
-        //         await interaction.deleteReply()
-        //     }, 5000);
-        //     return
-        // }
     } else {
         await interaction.reply({embeds: [getErrEmbed("В этой комнате у вас нет таких полномочий")]})
         setTimeout( async () => {
