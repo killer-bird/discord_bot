@@ -22,7 +22,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a, _b;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
-    if (privateRooms_1.config[member.voice.channelId]) {
+    if (privateRooms_1.config[interaction.channelId]) {
         yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
@@ -30,7 +30,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         return;
     }
     if ((0, privateRooms_1.checkAdmPerms)(interaction.user, room) || (0, privateRooms_1.checkModPerms)(interaction.user, room)) {
-        privateRooms_1.config[member.voice.channelId] = true;
+        privateRooms_1.config[interaction.channelId] = true;
         yield interaction.reply({ embeds: [(0, embeds_1.getAwaitMsgEmbed)("Укажите пользователя, которому необходимо выключить микрофон")] });
         const filter = (m) => {
             if (m.mentions.users.first()) {
@@ -47,19 +47,19 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     yield (0, privateRooms_1.getNotPermsErr)(interaction);
                     return;
                 }
-                yield (0, privateRooms_1.muteUser)(member.voice.channel, target);
+                yield (0, privateRooms_1.muteUser)(interaction.channel, target);
                 yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} замьючен. Он не больше не сможет разговаривать в вашей комнате`)] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
                 }), 3000);
-                privateRooms_1.config[member.voice.channelId] = false;
+                privateRooms_1.config[interaction.channelId] = false;
             }
             else {
                 yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
                 }), 3000);
-                privateRooms_1.config[member.voice.channelId] = false;
+                privateRooms_1.config[interaction.channelId] = false;
             }
         }
         catch (error) {
@@ -67,7 +67,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
             }), 5000);
-            privateRooms_1.config[member.voice.channelId] = false;
+            privateRooms_1.config[interaction.channelId] = false;
             return;
         }
     }

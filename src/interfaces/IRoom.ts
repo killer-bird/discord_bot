@@ -12,4 +12,6 @@ export interface IRoom {
     bans: UserId[];
     moderators: UserId[];
     limit: UserLimit | null;
+    invisible: boolean;
+    closed: boolean;
 }

@@ -28,7 +28,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a, _b;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
-    if (config_1.config[member.voice.channelId]) {
+    if (config_1.config[interaction.channelId]) {
         yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
@@ -36,7 +36,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         return;
     }
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room)) {
-        config_1.config[member.voice.channelId] = true;
+        config_1.config[interaction.channelId] = true;
         yield interaction.reply({ embeds: [(0, embeds_2.getAwaitMsgEmbed)("назначить пользователя модератором в комнате линканите его ниже")] });
         const filter = (m) => {
             if (m.mentions.users.first()) {
@@ -52,25 +52,25 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)(`Пользователь ${target} уже модератор!`)] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
-                    config_1.config[member.voice.channelId] = false;
+                    config_1.config[interaction.channelId] = false;
                 }), 3000);
                 return;
             }
-            config_1.config[member.voice.channelId] = false;
-            yield setModer(member.voice.channel, target);
+            config_1.config[interaction.channelId] = false;
+            yield setModer(interaction.channel, target);
             yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы назначили ${target} модератором комнаты.`)] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
-                config_1.config[member.voice.channelId] = false;
+                config_1.config[interaction.channelId] = false;
             }), 3000);
         }
         else {
             yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
-                config_1.config[member.voice.channelId] = false;
+                config_1.config[interaction.channelId] = false;
             }), 3000);
-            config_1.config[member.voice.channelId] = false;
+            config_1.config[interaction.channelId] = false;
         }
     }
     else {

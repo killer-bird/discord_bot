@@ -1,4 +1,8 @@
-import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, MessageEmbed, Message, Collection, Snowflake } from "discord.js"
+import { MessageButton, 
+    ButtonInteraction, 
+    GuildMember, 
+    VoiceChannel,  
+    MessageEmbed, Message, Collection, Snowflake } from "discord.js"
 import { checkAdmPerms, checkModPerms, getNotPermsErr, banUser, config } from "../privateRooms"
 import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
@@ -18,7 +22,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: interaction.channelId}) as IRoom
     
-    if(config[member.voice.channelId as string]) {
+    if(config[interaction.channelId as string]) {
         await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
         setTimeout( async () => {
             await interaction.deleteReply()
@@ -26,7 +30,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
         return
     }
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
-        config[member.voice.channelId as string] = true
+        config[interaction.channelId as string] = true
         await interaction.reply({embeds:[getAwaitMsgEmbed("забанить пользователя в комнате линканите его ниже")]})
 
         try {
@@ -48,8 +52,8 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                     await getNotPermsErr(interaction)
                     return
                 }
-                await banUser(member.voice.channel as VoiceChannel, target)
-                config[member.voice.channelId as string] = false
+                await banUser(interaction.channel as VoiceChannel, target)
+                config[interaction.channelId as string] = false
                 await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} забанен. Он не больше не сможет зайти в вашу комнату`)]})           
                 setTimeout(async() => {
                     await interaction.deleteReply()
@@ -59,18 +63,18 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                 setTimeout(async() => {
                     await interaction.deleteReply() 
                 }, 3000);
-                config[member.voice.channelId as string] = false
+                config[interaction.channelId as string] = false
             }
 
         } catch (error) {
             await getNotPermsErr(interaction)
-            config[member.voice.channelId as string] = false
+            config[interaction.channelId as string] = false
             return
         }
         
     } else {
         await getNotPermsErr(interaction)
-        config[member.voice.channelId as string] = false
+        config[interaction.channelId as string] = false
     }
 }
 

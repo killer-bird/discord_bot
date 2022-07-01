@@ -45,10 +45,40 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel>
                         Permissions.FLAGS.MUTE_MEMBERS, 
                         Permissions.FLAGS.DEAFEN_MEMBERS,
                         Permissions.FLAGS.MANAGE_ROLES,
-                        Permissions.FLAGS.READ_MESSAGE_HISTORY,
-                        Permissions.FLAGS.VIEW_CHANNEL
                         ]
-            }
+            },
+            room.closed ?
+            {
+                id : guild.roles.everyone,
+                deny: [
+                    Permissions.FLAGS.READ_MESSAGE_HISTORY,
+                    Permissions.FLAGS.VIEW_CHANNEL,
+                    Permissions.FLAGS.CONNECT
+                ]
+            }:
+            {
+                id : guild.roles.everyone,
+                allow: [
+                    Permissions.FLAGS.READ_MESSAGE_HISTORY,
+                    Permissions.FLAGS.VIEW_CHANNEL,
+                    Permissions.FLAGS.CONNECT
+                ]
+            },
+            room.invisible ?
+            {
+                id : guild.roles.everyone,
+                deny: [
+                    Permissions.FLAGS.VIEW_CHANNEL,
+                    Permissions.FLAGS.READ_MESSAGE_HISTORY
+                ]
+            }:
+            {
+                id : guild.roles.everyone,
+                allow: [
+                    Permissions.FLAGS.VIEW_CHANNEL,
+                    Permissions.FLAGS.READ_MESSAGE_HISTORY,
+                ]
+            },
 
         ],
     })
@@ -82,9 +112,7 @@ export const muteUser = async (channel: VoiceChannel, target: GuildMember) :Prom
         await target.voice.setChannel(channel)
         return  
     }
-    await channel.permissionOverwrites.create(target.user, {"SPEAK": false})
-    await Room.updateOne({id: channel.id}, {$push: {mutes: target.user.id}})
-    
+    await channel.permissionOverwrites.create(target.user, {"SPEAK": false})    
 }
 
 
@@ -105,9 +133,7 @@ export const unMuteUser = async (room: VoiceChannel, target: GuildMember) :Promi
         await Room.updateOne({id: room.id}, {$pull: {mutes: target.user.id}})
         return  
     } 
-    await room.permissionOverwrites.create(target.user, {"SPEAK": true}) 
-    await Room.updateOne({id: room.id}, {$pull: {mutes: target.user.id}})
-    
+    await room.permissionOverwrites.create(target.user, {"SPEAK": true})     
 }
 
 export const banUser = async (channel: VoiceChannel, target: GuildMember) => {
@@ -122,5 +148,4 @@ export const banUser = async (channel: VoiceChannel, target: GuildMember) => {
 
 export const  unBanUser = async (channel: VoiceChannel, target: GuildMember) => {
     await channel.permissionOverwrites.create(target.user, {'CONNECT': true})
-    await Room.updateOne({id: channel.id}, {$pull: {bans: target.user.id}})
 }

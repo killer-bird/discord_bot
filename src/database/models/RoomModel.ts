@@ -9,7 +9,9 @@ const RoomSchema = new Schema<IRoom>({
     mutes: [String],
     bans: [String],
     moderators: [String],
-    limit: Number
+    limit: Number,
+    invisible: Boolean,
+    closed: Boolean
 })
 
 

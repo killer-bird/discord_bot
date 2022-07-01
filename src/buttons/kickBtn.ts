@@ -1,4 +1,6 @@
-import { MessageButton, ButtonInteraction, GuildMember, VoiceChannel, User, Message, Collection, Snowflake } from "discord.js"
+import { MessageButton, 
+    ButtonInteraction, 
+    GuildMember, VoiceChannel, User, Message, Collection, Snowflake } from "discord.js"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { getAwaitMsgEmbed } from "../embeds"
@@ -49,7 +51,7 @@ export const execute = async (interaction: ButtonInteraction) => {
                     await getNotPermsErr(interaction)
                     return
                 }
-                if( voice.members.find(member => member.id === target.id)){
+                if( voice.members.find((member: GuildMember) => member.id === target.id)){
                     await kickUser(target)
                     config[member.voice.channelId as string] = false
                     await interaction.editReply({embeds:[getNotifyEmbed(`Вы кикнули ${target} из комнаты`)]})

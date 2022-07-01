@@ -52,7 +52,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
                     return;
                 }
-                if (voice.members.find(member => member.id === target.id)) {
+                if (voice.members.find((member) => member.id === target.id)) {
                     yield (0, privateRoom_utills_1.kickUser)(target);
                     config_1.config[member.voice.channelId] = false;
                     yield interaction.editReply({ embeds: [(0, embeds_2.getNotifyEmbed)(`Вы кикнули ${target} из комнаты`)] });

@@ -19,7 +19,7 @@ export const execute = async (interaction: ButtonInteraction) => {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: interaction.channelId}) as IRoom
 
-    if(config[member.voice.channelId as string]) {
+    if(config[interaction.channelId as string]) {
         await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
         setTimeout( async () => {
             await interaction.deleteReply()
@@ -29,7 +29,7 @@ export const execute = async (interaction: ButtonInteraction) => {
 
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         
-        config[member.voice.channelId as string] = true
+        config[interaction.channelId as string] = true
 
         await interaction.reply({embeds:[getAwaitMsgEmbed("Укажите пользователя, которому необходимо выключить микрофон")]})       
         const filter = (m: Message) => {
@@ -48,25 +48,25 @@ export const execute = async (interaction: ButtonInteraction) => {
                     await getNotPermsErr(interaction)
                     return
                 }
-                await muteUser(member.voice.channel as VoiceChannel, target)
+                await muteUser(interaction.channel as VoiceChannel, target)
                 await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} замьючен. Он не больше не сможет разговаривать в вашей комнате`)]})           
                 setTimeout(async() => {
                     await interaction.deleteReply()
                 }, 3000);
-                config[member.voice.channelId as string] = false
+                config[interaction.channelId as string] = false
             }else {
                 await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
                 setTimeout(async() => {
                     await interaction.deleteReply() 
                 }, 3000);
-                config[member.voice.channelId as string] = false
+                config[interaction.channelId as string] = false
             }
         } catch (error) {
             await interaction.editReply({embeds: [getErrEmbed("Произошла ошибка. Попробуйте еще раз")]})
             setTimeout( async () => {
                 await interaction.deleteReply()
             }, 5000);
-            config[member.voice.channelId as string] = false
+            config[interaction.channelId as string] = false
             return
         }
     }else {

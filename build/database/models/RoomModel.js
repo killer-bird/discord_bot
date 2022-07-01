@@ -9,6 +9,8 @@ const RoomSchema = new mongoose_1.Schema({
     mutes: [String],
     bans: [String],
     moderators: [String],
-    limit: Number
+    limit: Number,
+    invisible: Boolean,
+    closed: Boolean
 });
 exports.Room = (0, mongoose_1.model)("Room", RoomSchema);

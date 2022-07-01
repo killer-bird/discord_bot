@@ -23,7 +23,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a, _b;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
-    if (privateRooms_1.config[member.voice.channelId]) {
+    if (privateRooms_1.config[interaction.channelId]) {
         yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
@@ -31,7 +31,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         return;
     }
     if ((0, privateRooms_1.checkAdmPerms)(interaction.user, room) || (0, privateRooms_1.checkModPerms)(interaction.user, room)) {
-        privateRooms_1.config[member.voice.channelId] = true;
+        privateRooms_1.config[interaction.channelId] = true;
         yield interaction.reply({ embeds: [(0, embeds_2.getAwaitMsgEmbed)("забанить пользователя в комнате линканите его ниже")] });
         try {
             const filter = (m) => {
@@ -49,8 +49,8 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     yield (0, privateRooms_1.getNotPermsErr)(interaction);
                     return;
                 }
-                yield (0, privateRooms_1.banUser)(member.voice.channel, target);
-                privateRooms_1.config[member.voice.channelId] = false;
+                yield (0, privateRooms_1.banUser)(interaction.channel, target);
+                privateRooms_1.config[interaction.channelId] = false;
                 yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} забанен. Он не больше не сможет зайти в вашу комнату`)] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
@@ -61,18 +61,18 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
                 }), 3000);
-                privateRooms_1.config[member.voice.channelId] = false;
+                privateRooms_1.config[interaction.channelId] = false;
             }
         }
         catch (error) {
             yield (0, privateRooms_1.getNotPermsErr)(interaction);
-            privateRooms_1.config[member.voice.channelId] = false;
+            privateRooms_1.config[interaction.channelId] = false;
             return;
         }
     }
     else {
         yield (0, privateRooms_1.getNotPermsErr)(interaction);
-        privateRooms_1.config[member.voice.channelId] = false;
+        privateRooms_1.config[interaction.channelId] = false;
     }
 });
 exports.execute = execute;
