@@ -124,25 +124,32 @@ export const kickUser = async (target: GuildMember) :Promise<void> => {
 
 export const unMuteUser = async (room: VoiceChannel, target: GuildMember) :Promise<void> => {
     const afk = await target.guild.channels.fetch(process.env.AFK as string)
-    const roomModel = Room.findOne({id: room.id})
     if (room.members.has(target.user.id)) {
         console.log("UNMUTE IT HAS")
         await target.voice.setChannel(afk as VoiceChannel)
         await room.permissionOverwrites.create(target.user, {"SPEAK": true})
         await target.voice.setChannel(room)
-        await Room.updateOne({id: room.id}, {$pull: {mutes: target.user.id}})
         return  
     } 
     await room.permissionOverwrites.create(target.user, {"SPEAK": true})     
 }
 
 export const banUser = async (channel: VoiceChannel, target: GuildMember) => {
+    
     const afk = await target.guild.channels.fetch(process.env.AFK as string)
     await channel.permissionOverwrites.create(target.user, {'CONNECT': false})
     if (channel.members.has(target.user.id)) {
         await target.voice.setChannel(afk as VoiceChannel)
     }
-    await target.voice.setDeaf(false)
+    console.log(target.voice.serverDeaf);
+    if(target.voice.serverDeaf){
+        try {
+            await target.voice.setDeaf(false) 
+        } catch (error) {
+            console.log(error)
+        }    
+    }
+    
     
 }
 

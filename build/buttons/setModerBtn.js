@@ -56,12 +56,18 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }), 3000);
                 return;
             }
-            config_1.config[interaction.channelId] = false;
             yield setModer(interaction.channel, target);
             yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы назначили ${target} модератором комнаты.`)] });
+            config_1.config[interaction.channelId] = false;
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                yield interaction.deleteReply();
-                config_1.config[interaction.channelId] = false;
+                var _c;
+                try {
+                    yield interaction.deleteReply();
+                    yield ((_c = response.first()) === null || _c === void 0 ? void 0 : _c.delete());
+                }
+                catch (error) {
+                    return;
+                }
             }), 3000);
         }
         else {

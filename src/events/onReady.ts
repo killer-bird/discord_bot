@@ -7,10 +7,6 @@ import { createUser, newRoom, createRoomSettingsMsg } from "../utills/"
 
 
 const onReady = async (client: ExtendedClient) => {
-    const roomSettingsChannel = await client.channels.fetch(process.env.ROOM_SETTINGS as string) as TextChannel
-    if(!Array.from(await roomSettingsChannel.messages.fetch()).length) {
-        await createRoomSettingsMsg(roomSettingsChannel)
-    }
     
     const guild = client.guilds.cache.get(process.env.GUILD_ID as string)
     const members = await guild?.members.fetch()

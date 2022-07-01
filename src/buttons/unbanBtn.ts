@@ -4,7 +4,7 @@ import { MessageButton,
     VoiceChannel, 
     Message, Collection, Snowflake } from "discord.js"
 import { checkAdmPerms, checkModPerms, unBanUser, getNotPermsErr, config } from "../privateRooms"
-import { getErrEmbed, getAwaitMsgEmbed } from "../embeds"
+import { getErrEmbed, getAwaitMsgEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 
@@ -49,9 +49,15 @@ export const execute = async (interaction: ButtonInteraction): Promise<void> => 
                     return
                 }
                 await unBanUser(interaction.channel as VoiceChannel, target)
+                await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} получил доступ в комнату. Теперь он сможет зайти в вашу комнату`)]})
                 config[interaction.channelId as string] = false
                 setTimeout(async () => {
-                    await interaction.deleteReply()    
+                    try {
+                        await interaction.deleteReply()
+                        await response.first()?.delete()
+                    } catch (error) {
+                        return
+                    }
                 }, 5000);
             } else {
                 config[interaction.channelId as string] = false

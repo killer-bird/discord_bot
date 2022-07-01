@@ -49,23 +49,34 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     yield (0, privateRooms_1.getNotPermsErr)(interaction);
                     return;
                 }
-                yield (0, privateRooms_1.banUser)(interaction.channel, target);
+                try {
+                    yield (0, privateRooms_1.banUser)(interaction.channel, target);
+                }
+                catch (error) {
+                    console.log(error);
+                }
+                yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`У пользователя ${target} был забран доступ в комнату. Теперь он  больше не сможет зайти в вашу комнату`)] });
                 privateRooms_1.config[interaction.channelId] = false;
-                yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} забанен. Он не больше не сможет зайти в вашу комнату`)] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                    yield interaction.deleteReply();
+                    var _c;
+                    try {
+                        yield interaction.deleteReply();
+                        yield ((_c = response.first()) === null || _c === void 0 ? void 0 : _c.delete());
+                    }
+                    catch (error) {
+                        return;
+                    }
                 }), 3000);
             }
             else {
                 yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
+                privateRooms_1.config[interaction.channelId] = false;
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
                 }), 3000);
-                privateRooms_1.config[interaction.channelId] = false;
             }
         }
         catch (error) {
-            yield (0, privateRooms_1.getNotPermsErr)(interaction);
             privateRooms_1.config[interaction.channelId] = false;
             return;
         }

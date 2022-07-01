@@ -4,7 +4,7 @@ import { IEvent } from "../interfaces"
 const onMessageDelete = async (message: Message | PartialMessage) => {
     const guild = message.guild as Guild
     const author = message.author as User
-    const channel = await guild.channels.fetch(process.env.DELETED_MSG_CHANNEL as string) as TextChannel
+    const channel = await guild.channels.fetch(process.env.AUDIT_LOG as string) as TextChannel
     const messageChannel = message.channel as TextChannel
     if(!author.bot) {
         if(message.attachments.size){

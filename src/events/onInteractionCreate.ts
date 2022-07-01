@@ -1,7 +1,7 @@
 import { CommandInteraction } from "discord.js"
 import ExtendedClient from "../Client"
 import { IEvent, ICommand, IButton, IModal } from "../interfaces"
-
+import {config} from "../privateRooms"
 
 const onInteractionCreate = async (interaction: CommandInteraction) => {
     const client = interaction.client as ExtendedClient
@@ -28,9 +28,11 @@ const onInteractionCreate = async (interaction: CommandInteraction) => {
             await button.execute(interaction)
         } catch (error) {
             console.log(error)
+            config[interaction.channelId as string] = false
             return
         }
     }
+
 
     if(interaction.isModalSubmit()){
         const customId = interaction.customId

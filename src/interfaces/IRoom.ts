@@ -15,3 +15,4 @@ export interface IRoom {
     invisible: boolean;
     closed: boolean;
 }
+export type IRoomKey = keyof IRoom;

@@ -43,6 +43,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
 
             const response = await interaction.channel?.awaitMessages({filter: filter, max: 1, time: 15000})
             
+
             if (response?.size) {
                 const members = response.first()?.mentions.members as Collection<Snowflake, GuildMember>
                 const target = members.first() as GuildMember
@@ -52,30 +53,40 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                     await getNotPermsErr(interaction)
                     return
                 }
-                await banUser(interaction.channel as VoiceChannel, target)
+                try {
+                    await banUser(interaction.channel as VoiceChannel, target)
+                } catch (error) {
+                    console.log(error);
+                }
+                await interaction.editReply({embeds: [getNotifyEmbed(`У пользователя ${target} был забран доступ в комнату. Теперь он  больше не сможет зайти в вашу комнату`)]})           
                 config[interaction.channelId as string] = false
-                await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} забанен. Он не больше не сможет зайти в вашу комнату`)]})           
+                
                 setTimeout(async() => {
-                    await interaction.deleteReply()
+                    try {
+                        await interaction.deleteReply()
+                        await response.first()?.delete()
+                    } catch (error) {
+                        return
+                    }
                 }, 3000);
             } else {
                 await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
+                config[interaction.channelId as string] = false
                 setTimeout(async() => {
                     await interaction.deleteReply() 
                 }, 3000);
-                config[interaction.channelId as string] = false
             }
 
         } catch (error) {
-            await getNotPermsErr(interaction)
             config[interaction.channelId as string] = false
             return
         }
-        
+
     } else {
         await getNotPermsErr(interaction)
         config[interaction.channelId as string] = false
     }
+
 }
 
 export default {

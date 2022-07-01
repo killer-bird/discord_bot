@@ -62,12 +62,16 @@ export const execute = async ( interaction: ButtonInteraction) => {
                 return
             }
             
-            config[interaction.channelId as string] = false
             await setModer(interaction.channel as VoiceChannel, target)
             await interaction.editReply({embeds: [getNotifyEmbed(`Вы назначили ${target} модератором комнаты.`)]})           
+            config[interaction.channelId as string] = false
             setTimeout(async() => {
-                await interaction.deleteReply()
-                config[interaction.channelId as string] = false
+                try {
+                    await interaction.deleteReply()
+                    await response.first()?.delete()
+                } catch (error) {
+                    return
+                }
             }, 3000);
         } else {
             await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})

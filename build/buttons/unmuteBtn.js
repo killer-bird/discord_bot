@@ -50,27 +50,32 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }
                 yield (0, privateRooms_1.unMuteUser)(interaction.channel, target);
                 interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы размьютили ${target}.Теперь он снова сможет говорить в вашей комнате`)] });
+                privateRooms_1.config[interaction.channelId] = false;
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
-                    yield interaction.deleteReply();
-                    yield ((_c = response.first()) === null || _c === void 0 ? void 0 : _c.delete());
-                    privateRooms_1.config[interaction.channelId] = false;
+                    try {
+                        yield interaction.deleteReply();
+                        yield ((_c = response.first()) === null || _c === void 0 ? void 0 : _c.delete());
+                    }
+                    catch (error) {
+                        return;
+                    }
                 }), 3000);
             }
             else {
                 yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
+                privateRooms_1.config[interaction.channelId] = false;
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
-                    privateRooms_1.config[interaction.channelId] = false;
                 }), 3000);
             }
         }
         catch (error) {
             console.log(error);
             yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
+            privateRooms_1.config[interaction.channelId] = false;
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
-                privateRooms_1.config[interaction.channelId] = false;
             }), 5000);
             return;
         }

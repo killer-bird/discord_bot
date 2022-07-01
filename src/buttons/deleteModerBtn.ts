@@ -70,10 +70,15 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                     return
                 }
                 await deleteModer(interaction.channel as VoiceChannel, target)
-                config[interaction.channelId as string] = false
                 await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} уволен. Он не больше не сможет модерировать вашу комнату`)]})           
+                config[interaction.channelId as string] = false
                 setTimeout(async() => {
-                    await interaction.deleteReply()
+                    try {
+                        await interaction.deleteReply()
+                        await response.first()?.delete()
+                    } catch (error) {
+                        return
+                    }
                 }, 3000);
             } else {
                 config[interaction.channelId as string] = false

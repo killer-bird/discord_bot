@@ -53,24 +53,28 @@ export const execute = async ( interaction: ButtonInteraction) => {
                 }
                 await unMuteUser(interaction.channel as VoiceChannel, target)
                 interaction.editReply({embeds: [getNotifyEmbed(`Вы размьютили ${target}.Теперь он снова сможет говорить в вашей комнате`)]})
+                config[interaction.channelId as string] = false
                 setTimeout(async() => {
-                    await interaction.deleteReply()
-                    await response.first()?.delete()
-                    config[interaction.channelId as string] = false
+                    try {
+                        await interaction.deleteReply()
+                        await response.first()?.delete()
+                    } catch (error) {
+                        return
+                    }
                 }, 3000); 
             } else {
                 await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
+                config[interaction.channelId as string] = false
                 setTimeout(async() => {
                     await interaction.deleteReply() 
-                    config[interaction.channelId as string] = false
                 }, 3000);
             }
         } catch (error) {
             console.log(error)
             await interaction.editReply({embeds: [getErrEmbed("Произошла ошибка. Попробуйте еще раз")]})
+            config[interaction.channelId as string] = false
             setTimeout( async () => {
                 await interaction.deleteReply()
-                config[interaction.channelId as string] = false
             }, 5000);
             return
         }

@@ -53,10 +53,15 @@ export const execute = async (interaction: ButtonInteraction) => {
                 }
                 if( voice.members.find((member: GuildMember) => member.id === target.id)){
                     await kickUser(target)
-                    config[member.voice.channelId as string] = false
                     await interaction.editReply({embeds:[getNotifyEmbed(`Вы кикнули ${target} из комнаты`)]})
+                    config[member.voice.channelId as string] = false
                     setTimeout(async() => {
-                        await interaction.deleteReply()                  
+                        try {
+                            await interaction.deleteReply()
+                            await response.first()?.delete()
+                        } catch (error) {
+                            return
+                        }               
                     }, 3000);
                 }else {
                     config[member.voice.channelId as string] = false

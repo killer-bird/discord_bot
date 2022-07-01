@@ -48,9 +48,17 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     return;
                 }
                 yield (0, privateRooms_1.unBanUser)(interaction.channel, target);
+                yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} получил доступ в комнату. Теперь он сможет зайти в вашу комнату`)] });
                 privateRooms_1.config[interaction.channelId] = false;
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                    yield interaction.deleteReply();
+                    var _c;
+                    try {
+                        yield interaction.deleteReply();
+                        yield ((_c = response.first()) === null || _c === void 0 ? void 0 : _c.delete());
+                    }
+                    catch (error) {
+                        return;
+                    }
                 }), 5000);
             }
             else {

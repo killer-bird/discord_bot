@@ -64,10 +64,17 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     return;
                 }
                 yield deleteModer(interaction.channel, target);
-                config_1.config[interaction.channelId] = false;
                 yield interaction.editReply({ embeds: [(0, embeds_2.getNotifyEmbed)(`Пользователь ${target} уволен. Он не больше не сможет модерировать вашу комнату`)] });
+                config_1.config[interaction.channelId] = false;
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                    yield interaction.deleteReply();
+                    var _c;
+                    try {
+                        yield interaction.deleteReply();
+                        yield ((_c = response.first()) === null || _c === void 0 ? void 0 : _c.delete());
+                    }
+                    catch (error) {
+                        return;
+                    }
                 }), 3000);
             }
             else {
