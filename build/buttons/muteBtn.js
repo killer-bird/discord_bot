@@ -14,6 +14,7 @@ const discord_js_1 = require("discord.js");
 const privateRooms_1 = require("../privateRooms");
 const RoomModel_1 = require("../database/models/RoomModel");
 const embeds_1 = require("../embeds");
+const utills_1 = require("../utills");
 exports.muteBtn = new discord_js_1.MessageButton()
     .setCustomId('muteBtn')
     .setEmoji('988485884116615279')
@@ -50,6 +51,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 yield (0, privateRooms_1.muteUser)(interaction.channel, target);
                 yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} получил мут. Он не больше не сможет разговаривать в вашей комнате`)] });
                 privateRooms_1.config[interaction.channelId] = false;
+                yield (0, utills_1.memberSendToAudit)(member, `замутил ${target}`, interaction.channelId);
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
                     try {

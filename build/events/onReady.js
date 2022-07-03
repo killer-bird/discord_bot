@@ -9,12 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const rest_1 = require("@discordjs/rest");
+const v9_1 = require("discord-api-types/v9");
 const UserModel_1 = require("../database/models/UserModel");
 const RoomModel_1 = require("../database/models/RoomModel");
 const utills_1 = require("../utills/");
 const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
     const guild = client.guilds.cache.get(process.env.GUILD_ID);
     const members = yield (guild === null || guild === void 0 ? void 0 : guild.members.fetch());
+    const rest = new rest_1.REST({ version: "9" }).setToken(process.env.DISCORD_TOKEN);
+    const commandData = client.commands.map((command) => command.data.toJSON());
+    yield rest.put(v9_1.Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), { body: commandData });
     members === null || members === void 0 ? void 0 : members.forEach((member) => __awaiter(void 0, void 0, void 0, function* () {
         if (!member.user.bot && !(yield UserModel_1.User.exists({ id: member.user.id }))) {
             yield (0, utills_1.createUser)(member);

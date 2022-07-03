@@ -92,7 +92,7 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel>
 
 export const deleteRoom = async (voice: VoiceChannel) :Promise<void> => {
     try {
-        if (!voice.members.size) {
+        if (!voice.members.filter(member => !member.user.bot).size) {
             delete config[voice.id]
             await voice.delete()
         }     
@@ -154,5 +154,5 @@ export const banUser = async (channel: VoiceChannel, target: GuildMember) => {
 }
 
 export const  unBanUser = async (channel: VoiceChannel, target: GuildMember) => {
-    await channel.permissionOverwrites.create(target.user, {'CONNECT': true})
+    await channel.permissionOverwrites.create(target.user, {'CONNECT': true, 'VIEW_CHANNEL': true})
 }

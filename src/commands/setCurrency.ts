@@ -31,7 +31,7 @@ export async function execute(interaction: CommandInteraction) {
     if (user) {
         setCurrency(user, count)
         .then( async () => {
-           await ( await user.createDM() ).send({embeds: [getNotifyEmbed(`${author} установил вам  баланс мужских слёзок: ${count}`)]})
+            await ( await user.createDM() ).send({embeds: [getNotifyEmbed(`${author} установил вам  баланс мужских слёзок: ${count}`)]})
         })
     } else {
         setCurrency(author , count)

@@ -1,6 +1,6 @@
 import { MessageButton, 
     ButtonInteraction, 
-    GuildMember, 
+    GuildMember, VoiceChannel, Guild   
     } from "discord.js"
 import { checkAdmPerms, checkModPerms} from "../privateRooms"
 import { getErrEmbed, getNotifyEmbed } from "../embeds"
@@ -9,30 +9,21 @@ import { IRoom, IButton } from "../interfaces"
 import { memberSendToAudit } from "../utills"
 
 
-export const invisibleBtn = new MessageButton()
-    .setCustomId('invisibleBtn')
-    .setEmoji('992530676039569478')
+export const privateBtn = new MessageButton()
+    .setCustomId('privateBtn')
+    .setEmoji('993143299353362473')
     .setStyle('SECONDARY')
 
-
-
-export const execute = async ( interaction: ButtonInteraction): Promise<void> => {
-
+export const execute = async ( interaction: ButtonInteraction) : Promise<void> => {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: interaction.channelId}) as IRoom
 
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
-        if(room.invisible) {
-            await interaction.reply({embeds: [getNotifyEmbed("Комната и так скрыта!")]})
-            setTimeout( async () => {
-                await interaction.deleteReply()
-                return
-            }, 5000);
-        }
-
-        member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"VIEW_CHANNEL": false})
-        await interaction.reply({embeds: [getNotifyEmbed("Вы сделали комнату невидимой. Теперь её не все видят.")]})
-        await memberSendToAudit(member, `cделал невидимой`, interaction.channelId)
+        const guild = interaction.guild as Guild
+        const voice = await guild.channels.fetch(interaction.channelId) as VoiceChannel
+        await voice.edit({ userLimit: 2})
+        await interaction.reply({embeds: [getNotifyEmbed("Вы сделали комнату на двоих")]})
+        await memberSendToAudit(member, `сделал приватной`, interaction.channelId)
         setTimeout( async () => {
             await interaction.deleteReply()
         }, 5000);
@@ -45,7 +36,8 @@ export const execute = async ( interaction: ButtonInteraction): Promise<void> =>
 
 }
 
+
 export default {
-    data: invisibleBtn,
+    data: privateBtn,
     execute
 } as IButton

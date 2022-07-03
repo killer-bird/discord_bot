@@ -9,7 +9,7 @@ import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
 import { config } from "../privateRooms/config"
 import { kickUser } from "../privateRooms/privateRoom.utills"
-
+import { memberSendToAudit } from "../utills"
 
 export const kickBtn = new MessageButton()
     .setCustomId('kickBtn')
@@ -55,6 +55,7 @@ export const execute = async (interaction: ButtonInteraction) => {
                     await kickUser(target)
                     await interaction.editReply({embeds:[getNotifyEmbed(`Вы кикнули ${target} из комнаты`)]})
                     config[member.voice.channelId as string] = false
+                    await memberSendToAudit(member, `выгнал ${target}`, interaction.channelId)
                     setTimeout(async() => {
                         try {
                             await interaction.deleteReply()

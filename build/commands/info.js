@@ -16,7 +16,6 @@ const isUserExist_1 = require("../utills/isUserExist");
 const embeds_1 = require("../embeds");
 const getInfoEmbed = (target) => __awaiter(void 0, void 0, void 0, function* () {
     const info = yield UserModel_1.User.findOne({ id: target === null || target === void 0 ? void 0 : target.id });
-    console.log(info === null || info === void 0 ? void 0 : info.currency);
     const infoEmbed = new discord_js_1.MessageEmbed();
     infoEmbed.setTitle("Информация о пользователе")
         .setImage(`https://cdn.discordapp.com/avatars/${target === null || target === void 0 ? void 0 : target.id}/${target === null || target === void 0 ? void 0 : target.avatar}.jpg`)

@@ -4,7 +4,7 @@ import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom } from "../interfaces"
 import { getAwaitMsgEmbed } from "../embeds"
-
+import { memberSendToAudit } from "../utills"
 
 
 
@@ -52,8 +52,9 @@ export const execute = async ( interaction: ButtonInteraction) => {
                     return
                 }
                 await unMuteUser(interaction.channel as VoiceChannel, target)
-                interaction.editReply({embeds: [getNotifyEmbed(`Вы размьютили ${target}.Теперь он снова сможет говорить в вашей комнате`)]})
+                interaction.editReply({embeds: [getNotifyEmbed(`Вы размутили ${target}.Теперь он снова сможет говорить в вашей комнате`)]})
                 config[interaction.channelId as string] = false
+                await memberSendToAudit(member, `размутил ${target}`, interaction.channelId)
                 setTimeout(async() => {
                     try {
                         await interaction.deleteReply()

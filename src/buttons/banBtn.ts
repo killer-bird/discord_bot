@@ -8,7 +8,7 @@ import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces/"
 import { getAwaitMsgEmbed } from "../embeds"
-
+import { memberSendToAudit } from "../utills"
 
 
 
@@ -60,7 +60,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                 }
                 await interaction.editReply({embeds: [getNotifyEmbed(`У пользователя ${target} был забран доступ в комнату. Теперь он  больше не сможет зайти в вашу комнату`)]})           
                 config[interaction.channelId as string] = false
-                
+                await memberSendToAudit(member, `забанил ${target}`, interaction.channelId)
                 setTimeout(async() => {
                     try {
                         await interaction.deleteReply()

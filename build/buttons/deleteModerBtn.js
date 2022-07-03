@@ -17,6 +17,7 @@ const checkPerms_1 = require("../privateRooms/checkPerms");
 const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
 const embeds_2 = require("../embeds");
 const config_1 = require("../privateRooms/config");
+const utills_1 = require("../utills");
 const deleteModer = (room, target) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield RoomModel_1.Room.updateOne({ id: room.id }, { $pull: { moderators: target.user.id } });
@@ -66,6 +67,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 yield deleteModer(interaction.channel, target);
                 yield interaction.editReply({ embeds: [(0, embeds_2.getNotifyEmbed)(`Пользователь ${target} уволен. Он не больше не сможет модерировать вашу комнату`)] });
                 config_1.config[interaction.channelId] = false;
+                yield (0, utills_1.memberSendToAudit)(member, `снял с модерки ${target}`, interaction.channelId);
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
                     try {

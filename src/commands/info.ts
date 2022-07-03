@@ -8,7 +8,6 @@ import { ICommand } from "../interfaces"
 const getInfoEmbed = async (target: User) :Promise<MessageEmbed> => { 
     
     const info = await UserModel.findOne({id: target?.id})
-    console.log(info?.currency)
     const infoEmbed = new MessageEmbed()
     infoEmbed.setTitle("Информация о пользователе")
     .setImage(`https://cdn.discordapp.com/avatars/${target?.id}/${target?.avatar}.jpg`)
@@ -46,9 +45,7 @@ async function execute(interaction: CommandInteraction) {
         }      
     } else {        
         return await interaction.editReply({embeds: [ await getInfoEmbed(author)]})
-    } 
-           
-    
+    }   
 }
 
 export default {

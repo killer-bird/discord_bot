@@ -3,7 +3,7 @@ import { checkAdmPerms, checkModPerms, muteUser, config, getNotPermsErr } from "
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { getAwaitMsgEmbed, getErrEmbed, getNotifyEmbed } from "../embeds"
-
+import { memberSendToAudit } from "../utills"
 
 
 
@@ -55,7 +55,7 @@ export const execute = async (interaction: ButtonInteraction) => {
                 await muteUser(interaction.channel as VoiceChannel, target)
                 await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} получил мут. Он не больше не сможет разговаривать в вашей комнате`)]})           
                 config[interaction.channelId as string] = false
-                
+                await memberSendToAudit(member, `замутил ${target}`, interaction.channelId)
                 setTimeout(async() => {
                     try {
                         await interaction.deleteReply()

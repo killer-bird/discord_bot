@@ -6,8 +6,7 @@ import { checkAdmPerms, checkModPerms} from "../privateRooms"
 import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
-
-
+import { memberSendToAudit } from "../utills"
 
 export const visibleBtn = new MessageButton()
     .setCustomId('visibleBtn')
@@ -32,6 +31,7 @@ export const execute = async ( interaction: ButtonInteraction): Promise<void> =>
 
         member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"VIEW_CHANNEL": true})
         await interaction.reply({embeds: [getNotifyEmbed("Вы сделали комнату видимой. Теперь ее все видят.")]})
+        await memberSendToAudit(member, `сделал видимой`, interaction.channelId)
         setTimeout( async () => {
             await interaction.deleteReply()
         }, 5000);

@@ -2,15 +2,10 @@ import { MessageButton, ButtonInteraction, GuildMember, MessageEmbed } from "dis
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
 import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
-import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
+import { getNotPermsErr } from "../privateRooms/"
+import { memberSendToAudit } from "../utills"
+import {getNotifyEmbed} from "../embeds"
 
-const getUnlockRoomEmbed = (): MessageEmbed => {
-    const unlockRoomEmbed = new MessageEmbed()
-        .setTitle("Комната открыта")
-        .setDescription("Теперь к вам могут зайти все")
-
-    return unlockRoomEmbed
-}
 
 export const unlockBtn = new MessageButton()
     .setCustomId("unlockBtn")
@@ -24,7 +19,8 @@ export const execute = async ( interaction: ButtonInteraction) => {
 
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"CONNECT": true})
-        await interaction.reply({embeds: [getUnlockRoomEmbed()]})
+        await interaction.reply({embeds: [getNotifyEmbed("Комната открыта. Теперь любой может к вам зайти")]})
+        await memberSendToAudit(member, `открыл комнату`, interaction.channelId)
         setTimeout( async () => {
             await interaction.deleteReply()
         }, 5000);

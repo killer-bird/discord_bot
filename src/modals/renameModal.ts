@@ -3,6 +3,8 @@ import { Room } from "../database/models/RoomModel"
 import { IModal } from "../interfaces"
 import { RoomName } from "../types/RoomName"
 import { getNotifyEmbed } from "../embeds"
+import { memberSendToAudit } from "../utills"
+
 
 const setName = async (room: VoiceChannel, name: RoomName) :Promise<void> => {
     await room.edit({name: name})
@@ -27,7 +29,6 @@ export const execute = async (interaction:ModalSubmitInteraction) => {
     const room = interaction.channel as VoiceChannel
     const oldName = room.name as RoomName 
     let name = interaction.fields.getTextInputValue('renameBtnInput')
-    
     if( name === '0') {
         name = member.user.username 
     }
@@ -36,8 +37,8 @@ export const execute = async (interaction:ModalSubmitInteraction) => {
     setTimeout(async() => {
         await interaction.deleteReply()
     }, 3000);
+    await memberSendToAudit(member, `cменил название комнаты на ${name}`, interaction.channelId as string);
 }
-
 
 export default {
     data: renameModal,

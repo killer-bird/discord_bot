@@ -16,7 +16,6 @@ export const banHandler = async ( voiceState: VoiceState, ban: boolean) => {
     
     if(ban){
         await banUser(voiceState.channel as VoiceChannel, member)
-        await Room.updateOne({id: voiceState.channelId}, {$push: {bans: member.user.id}})
         
     } else {
         await unBanUser(voiceState.channel as VoiceChannel, member)

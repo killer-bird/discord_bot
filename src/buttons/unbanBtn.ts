@@ -7,7 +7,7 @@ import { checkAdmPerms, checkModPerms, unBanUser, getNotPermsErr, config } from 
 import { getErrEmbed, getAwaitMsgEmbed, getNotifyEmbed } from "../embeds"
 import { Room } from "../database/models/RoomModel"
 import { IRoom, IButton } from "../interfaces"
-
+import { memberSendToAudit } from "../utills"
 
 
 export const unbanBtn = new MessageButton()
@@ -51,6 +51,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void> => 
                 await unBanUser(interaction.channel as VoiceChannel, target)
                 await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} получил доступ в комнату. Теперь он сможет зайти в вашу комнату`)]})
                 config[interaction.channelId as string] = false
+                await memberSendToAudit(member, `разбанил ${target}`, interaction.channelId)
                 setTimeout(async () => {
                     try {
                         await interaction.deleteReply()

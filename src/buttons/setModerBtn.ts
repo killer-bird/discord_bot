@@ -14,7 +14,7 @@ import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
 import { getAwaitMsgEmbed } from "../embeds"
 import { config } from "../privateRooms/config"
 import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
-
+import { memberSendToAudit } from "../utills"
 
 const setModer = async (room: VoiceChannel, target: GuildMember) :Promise<void> => {
     await Room.updateOne({id: room.id}, {$push: {moderators: target.user.id}})   
@@ -65,6 +65,7 @@ export const execute = async ( interaction: ButtonInteraction) => {
             await setModer(interaction.channel as VoiceChannel, target)
             await interaction.editReply({embeds: [getNotifyEmbed(`Вы назначили ${target} модератором комнаты.`)]})           
             config[interaction.channelId as string] = false
+            await memberSendToAudit(member, `сделал модером ${target}`, interaction.channelId)
             setTimeout(async() => {
                 try {
                     await interaction.deleteReply()

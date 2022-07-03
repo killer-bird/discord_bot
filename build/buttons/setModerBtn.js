@@ -17,6 +17,7 @@ const checkPerms_1 = require("../privateRooms/checkPerms");
 const embeds_2 = require("../embeds");
 const config_1 = require("../privateRooms/config");
 const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
+const utills_1 = require("../utills");
 const setModer = (room, target) => __awaiter(void 0, void 0, void 0, function* () {
     yield RoomModel_1.Room.updateOne({ id: room.id }, { $push: { moderators: target.user.id } });
 });
@@ -59,6 +60,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             yield setModer(interaction.channel, target);
             yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы назначили ${target} модератором комнаты.`)] });
             config_1.config[interaction.channelId] = false;
+            yield (0, utills_1.memberSendToAudit)(member, `сделал модером ${target}`, interaction.channelId);
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 var _c;
                 try {

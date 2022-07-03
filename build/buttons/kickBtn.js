@@ -18,6 +18,7 @@ const embeds_2 = require("../embeds");
 const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
 const config_1 = require("../privateRooms/config");
 const privateRoom_utills_1 = require("../privateRooms/privateRoom.utills");
+const utills_1 = require("../utills");
 exports.kickBtn = new discord_js_1.MessageButton()
     .setCustomId('kickBtn')
     .setEmoji('988485882216607786')
@@ -56,6 +57,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     yield (0, privateRoom_utills_1.kickUser)(target);
                     yield interaction.editReply({ embeds: [(0, embeds_2.getNotifyEmbed)(`Вы кикнули ${target} из комнаты`)] });
                     config_1.config[member.voice.channelId] = false;
+                    yield (0, utills_1.memberSendToAudit)(member, `выгнал ${target}`, interaction.channelId);
                     setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                         var _c;
                         try {

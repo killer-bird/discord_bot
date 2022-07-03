@@ -15,6 +15,7 @@ const privateRooms_1 = require("../privateRooms/");
 const embeds_1 = require("../embeds");
 const RoomModel_1 = require("../database/models/RoomModel");
 const embeds_2 = require("../embeds");
+const utills_1 = require("../utills");
 exports.unmuteBtn = new discord_js_1.MessageButton()
     .setCustomId('unmuteBtn')
     .setEmoji('988485885647523840')
@@ -49,8 +50,9 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     return;
                 }
                 yield (0, privateRooms_1.unMuteUser)(interaction.channel, target);
-                interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы размьютили ${target}.Теперь он снова сможет говорить в вашей комнате`)] });
+                interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы размутили ${target}.Теперь он снова сможет говорить в вашей комнате`)] });
                 privateRooms_1.config[interaction.channelId] = false;
+                yield (0, utills_1.memberSendToAudit)(member, `размутил ${target}`, interaction.channelId);
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
                     try {

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createRoomSettingsMsg = void 0;
+exports.createRoomSettingsMsg = exports.getRoomSettingsEmbed = void 0;
 const discord_js_1 = require("discord.js");
 const components_1 = require("../components");
 const getRoomSettingsEmbed = () => {
@@ -27,14 +27,19 @@ const getRoomSettingsEmbed = () => {
         <:nosound:988485884116615279> — **замутить пользователя** \n
         <:volume:988485885647523840> — **размутить пользователя** \n
         <:leader:988485887165878283> — **сделать пользователя модератором** \n
-        <:forbidden:988485889539862598> — **снять пользователя с модерации**
+        <:forbidden:988485889539862598> — **снять пользователя с модерации** \n
+        <:info:991458590810439700> — **получить информацию о комнате** \n
+        <:invisible:992530676039569478> — **сделать комнату невидимой**\n
+        <:visible:992530674387013662> — **cделать комнату видимой** \n
+        <:balloons:993143299353362473> — **сделать комнату на двоих**
         `);
     return roomSettingsEmbed;
 };
+exports.getRoomSettingsEmbed = getRoomSettingsEmbed;
 const createRoomSettingsMsg = (textChannel) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield textChannel.send({
-            embeds: [getRoomSettingsEmbed()],
+            embeds: [(0, exports.getRoomSettingsEmbed)()],
             components: [components_1.btnRowHigh, components_1.btnRowMiddle, components_1.btnRowLow]
         });
     }

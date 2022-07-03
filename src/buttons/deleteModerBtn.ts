@@ -14,7 +14,7 @@ import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
 import { getNotPermsErr } from "../privateRooms/getNotPermsErr"
 import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import { config } from "../privateRooms/config"
-
+import { memberSendToAudit } from "../utills"
 
 const deleteModer = async (room: VoiceChannel, target: GuildMember) => {
     try {
@@ -72,6 +72,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                 await deleteModer(interaction.channel as VoiceChannel, target)
                 await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} уволен. Он не больше не сможет модерировать вашу комнату`)]})           
                 config[interaction.channelId as string] = false
+                await memberSendToAudit(member, `снял с модерки ${target}`, interaction.channelId)
                 setTimeout(async() => {
                     try {
                         await interaction.deleteReply()

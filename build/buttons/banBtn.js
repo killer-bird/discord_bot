@@ -15,6 +15,7 @@ const privateRooms_1 = require("../privateRooms");
 const embeds_1 = require("../embeds");
 const RoomModel_1 = require("../database/models/RoomModel");
 const embeds_2 = require("../embeds");
+const utills_1 = require("../utills");
 exports.banBtn = new discord_js_1.MessageButton()
     .setCustomId('banBtn')
     .setEmoji('988485878743711774')
@@ -57,6 +58,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }
                 yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`У пользователя ${target} был забран доступ в комнату. Теперь он  больше не сможет зайти в вашу комнату`)] });
                 privateRooms_1.config[interaction.channelId] = false;
+                yield (0, utills_1.memberSendToAudit)(member, `забанил ${target}`, interaction.channelId);
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
                     try {

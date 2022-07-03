@@ -14,6 +14,7 @@ const discord_js_1 = require("discord.js");
 const privateRooms_1 = require("../privateRooms");
 const embeds_1 = require("../embeds");
 const RoomModel_1 = require("../database/models/RoomModel");
+const utills_1 = require("../utills");
 exports.unbanBtn = new discord_js_1.MessageButton()
     .setCustomId("unbanBtn")
     .setEmoji('988485880337551401')
@@ -50,6 +51,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 yield (0, privateRooms_1.unBanUser)(interaction.channel, target);
                 yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} получил доступ в комнату. Теперь он сможет зайти в вашу комнату`)] });
                 privateRooms_1.config[interaction.channelId] = false;
+                yield (0, utills_1.memberSendToAudit)(member, `разбанил ${target}`, interaction.channelId);
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
                     try {

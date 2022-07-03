@@ -41,6 +41,7 @@ export const execute = async (interaction: ModalSubmitInteraction) => {
         setTimeout(async() => {
             await interaction.deleteReply()
         }, 3000);
+        await memberSendToAudit(member, `сменил лимит на ${limit}`, interaction.channelId)
     } else {
         await interaction.reply({embeds: [getErrEmbed("Введите корректное значение!")]})
         setTimeout(async() => {

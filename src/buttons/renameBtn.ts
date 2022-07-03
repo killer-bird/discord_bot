@@ -13,6 +13,7 @@ import { checkAdmPerms, checkModPerms } from "../privateRooms/checkPerms"
 import { getErrEmbed } from "../embeds"
 
 
+
 const setName = async (room: VoiceChannel, name: RoomName) :Promise<void> => {
     console.log(name)
     await room.edit({name: name})

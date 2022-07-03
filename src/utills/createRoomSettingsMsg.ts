@@ -2,7 +2,7 @@ import { TextChannel, MessageEmbed } from "discord.js"
 import { btnRowLow, btnRowHigh, btnRowMiddle } from "../components"
 
 
-const getRoomSettingsEmbed = ():MessageEmbed => {
+export const getRoomSettingsEmbed = ():MessageEmbed => {
     const roomSettingsEmbed = new MessageEmbed()
     roomSettingsEmbed.setTitle("Настройки личной комнаты")
 
@@ -18,7 +18,11 @@ const getRoomSettingsEmbed = ():MessageEmbed => {
         <:nosound:988485884116615279> — **замутить пользователя** \n
         <:volume:988485885647523840> — **размутить пользователя** \n
         <:leader:988485887165878283> — **сделать пользователя модератором** \n
-        <:forbidden:988485889539862598> — **снять пользователя с модерации**
+        <:forbidden:988485889539862598> — **снять пользователя с модерации** \n
+        <:info:991458590810439700> — **получить информацию о комнате** \n
+        <:invisible:992530676039569478> — **сделать комнату невидимой**\n
+        <:visible:992530674387013662> — **cделать комнату видимой** \n
+        <:balloons:993143299353362473> — **сделать комнату на двоих**
         `)
     return roomSettingsEmbed
 
