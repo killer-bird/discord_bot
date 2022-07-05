@@ -20,7 +20,7 @@ export const execute = async ( interaction: ButtonInteraction) => {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: interaction.channelId}) as IRoom
 
-    if(config[interaction.channelId as string]) {
+    if(config[interaction.channelId as string].btnDelay) {
         await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
         setTimeout( async () => {
             await interaction.deleteReply()
@@ -31,7 +31,7 @@ export const execute = async ( interaction: ButtonInteraction) => {
 
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         
-        config[interaction.channelId as string] = true
+        config[interaction.channelId as string].btnDelay = true
         await interaction.reply({embeds:[getAwaitMsgEmbed("размьютить пользователя, ")]})
         
         
@@ -53,7 +53,7 @@ export const execute = async ( interaction: ButtonInteraction) => {
                 }
                 await unMuteUser(interaction.channel as VoiceChannel, target)
                 interaction.editReply({embeds: [getNotifyEmbed(`Вы размутили ${target}.Теперь он снова сможет говорить в вашей комнате`)]})
-                config[interaction.channelId as string] = false
+                config[interaction.channelId as string].btnDelay = false
                 await memberSendToAudit(member, `размутил ${target}`, interaction.channelId)
                 setTimeout(async() => {
                     try {
@@ -65,7 +65,7 @@ export const execute = async ( interaction: ButtonInteraction) => {
                 }, 3000); 
             } else {
                 await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
-                config[interaction.channelId as string] = false
+                config[interaction.channelId as string].btnDelay = false
                 setTimeout(async() => {
                     await interaction.deleteReply() 
                 }, 3000);
@@ -73,7 +73,7 @@ export const execute = async ( interaction: ButtonInteraction) => {
         } catch (error) {
             console.log(error)
             await interaction.editReply({embeds: [getErrEmbed("Произошла ошибка. Попробуйте еще раз")]})
-            config[interaction.channelId as string] = false
+            config[interaction.channelId as string].btnDelay = false
             setTimeout( async () => {
                 await interaction.deleteReply()
             }, 5000);

@@ -19,7 +19,7 @@ const onInteractionCreate = async (interaction: CommandInteraction) => {
         }
     }
 
-
+    
     if(interaction.isButton()){
         const customId = interaction.customId
         const button = client.buttons.get(customId) as IButton
@@ -27,7 +27,7 @@ const onInteractionCreate = async (interaction: CommandInteraction) => {
             await button.execute(interaction)
         } catch (error) {
             console.log(error)
-            config[interaction.channelId as string] = false
+            config[interaction.channelId as string].btnDelay = false
             return
         }
     }

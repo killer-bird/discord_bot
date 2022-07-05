@@ -28,7 +28,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     const member = interaction.member;
     const voice = member.voice.channel;
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
-    if (config_1.config[member.voice.channelId]) {
+    if (config_1.config[member.voice.channelId].btnDelay) {
         yield interaction.reply({ embeds: [(0, embeds_2.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
@@ -36,7 +36,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         return;
     }
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
-        config_1.config[member.voice.channelId] = true;
+        config_1.config[member.voice.channelId].btnDelay = true;
         yield interaction.reply({ embeds: [(0, embeds_1.getAwaitMsgEmbed)("Укажите пользователя, которого необходимо замутить")] });
         const filter = (m) => {
             if (m.mentions.users.first()) {
@@ -56,7 +56,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 if (voice.members.find((member) => member.id === target.id)) {
                     yield (0, privateRoom_utills_1.kickUser)(target);
                     yield interaction.editReply({ embeds: [(0, embeds_2.getNotifyEmbed)(`Вы кикнули ${target} из комнаты`)] });
-                    config_1.config[member.voice.channelId] = false;
+                    config_1.config[member.voice.channelId].btnDelay = false;
                     yield (0, utills_1.memberSendToAudit)(member, `выгнал ${target}`, interaction.channelId);
                     setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                         var _c;
@@ -70,7 +70,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                     }), 3000);
                 }
                 else {
-                    config_1.config[member.voice.channelId] = false;
+                    config_1.config[member.voice.channelId].btnDelay = false;
                     yield interaction.editReply({ embeds: [(0, embeds_2.getErrEmbed)(`Сейчас ${target} не находится в комнате!`)] });
                     setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                         yield interaction.deleteReply();
@@ -78,7 +78,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }
             }
             else {
-                config_1.config[member.voice.channelId] = false;
+                config_1.config[member.voice.channelId].btnDelay = false;
                 yield interaction.editReply({ embeds: [(0, embeds_2.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
@@ -86,7 +86,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             }
         }
         catch (error) {
-            config_1.config[member.voice.channelId] = false;
+            config_1.config[member.voice.channelId].btnDelay = false;
             console.log(error);
             yield interaction.editReply({ embeds: [(0, embeds_2.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {

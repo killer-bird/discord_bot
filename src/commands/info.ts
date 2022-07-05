@@ -52,4 +52,3 @@ export default {
     data,
     execute
 } as ICommand
- 

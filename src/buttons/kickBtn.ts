@@ -23,7 +23,7 @@ export const execute = async (interaction: ButtonInteraction) => {
     const voice = member.voice.channel as VoiceChannel
     const room = await Room.findOne({id: interaction.channelId}) as IRoom
     
-    if(config[member.voice.channelId as string]) {
+    if(config[member.voice.channelId as string].btnDelay) {
         await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
         setTimeout( async () => {
             await interaction.deleteReply()
@@ -32,7 +32,7 @@ export const execute = async (interaction: ButtonInteraction) => {
     }
 
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
-        config[member.voice.channelId as string] = true
+        config[member.voice.channelId as string].btnDelay = true
         await interaction.reply({embeds:[getAwaitMsgEmbed("Укажите пользователя, которого необходимо замутить")]})      
         
         const filter = (m: Message) => {
@@ -54,7 +54,7 @@ export const execute = async (interaction: ButtonInteraction) => {
                 if( voice.members.find((member: GuildMember) => member.id === target.id)){
                     await kickUser(target)
                     await interaction.editReply({embeds:[getNotifyEmbed(`Вы кикнули ${target} из комнаты`)]})
-                    config[member.voice.channelId as string] = false
+                    config[member.voice.channelId as string].btnDelay = false
                     await memberSendToAudit(member, `выгнал ${target}`, interaction.channelId)
                     setTimeout(async() => {
                         try {
@@ -65,7 +65,7 @@ export const execute = async (interaction: ButtonInteraction) => {
                         }               
                     }, 3000);
                 }else {
-                    config[member.voice.channelId as string] = false
+                    config[member.voice.channelId as string].btnDelay = false
                     await interaction.editReply({embeds:[getErrEmbed(`Сейчас ${target} не находится в комнате!`)]})
                     setTimeout(async() => {
                         await interaction.deleteReply()                  
@@ -73,14 +73,14 @@ export const execute = async (interaction: ButtonInteraction) => {
                 }
                 
             }else {
-                config[member.voice.channelId as string] = false
+                config[member.voice.channelId as string].btnDelay = false
                 await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
                 setTimeout(async() => {
                     await interaction.deleteReply() 
                 }, 3000);
             }
         } catch (error) {
-            config[member.voice.channelId as string] = false
+            config[member.voice.channelId as string].btnDelay = false
             console.log(error)
             await interaction.editReply({embeds: [getErrEmbed("Произошла ошибка. Попробуйте еще раз")]})
             setTimeout( async () => {

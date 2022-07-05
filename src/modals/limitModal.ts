@@ -2,6 +2,8 @@ import { Modal, TextInputComponent, ModalSubmitInteraction, GuildMember, Message
 import { Room } from "../database/models/RoomModel"
 import { UserLimit } from "../types/UserLimit"
 import { getErrEmbed, getNotifyEmbed } from "../embeds"
+import {memberSendToAudit} from "../utills"
+
 
 const setLimit = async (room : VoiceChannel, limit: UserLimit) => {
     console.log(limit)
@@ -41,7 +43,7 @@ export const execute = async (interaction: ModalSubmitInteraction) => {
         setTimeout(async() => {
             await interaction.deleteReply()
         }, 3000);
-        await memberSendToAudit(member, `сменил лимит на ${limit}`, interaction.channelId)
+        await memberSendToAudit(member, `сменил лимит на ${limit}`, interaction.channelId as string)
     } else {
         await interaction.reply({embeds: [getErrEmbed("Введите корректное значение!")]})
         setTimeout(async() => {

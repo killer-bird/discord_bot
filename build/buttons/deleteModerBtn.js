@@ -35,7 +35,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a, _b;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
-    if (config_1.config[interaction.channelId]) {
+    if (config_1.config[interaction.channelId].btnDelay) {
         yield interaction.reply({ embeds: [(0, embeds_2.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
@@ -43,7 +43,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         return;
     }
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room)) {
-        config_1.config[interaction.channelId] = true;
+        config_1.config[interaction.channelId].btnDelay = true;
         yield interaction.reply({ embeds: [(0, embeds_1.getAwaitMsgEmbed)("уволить модератора комнаты укажите его ниже")] });
         try {
             const filter = (m) => {
@@ -57,7 +57,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 const members = (_b = response.first()) === null || _b === void 0 ? void 0 : _b.mentions.members;
                 const target = members.first();
                 if (!(0, checkPerms_1.checkModPerms)(target.user, room)) {
-                    config_1.config[interaction.channelId] = false;
+                    config_1.config[interaction.channelId].btnDelay = false;
                     yield interaction.editReply({ embeds: [(0, embeds_2.getErrEmbed)(`${target} не является модератором!`)] });
                     setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                         yield interaction.deleteReply();
@@ -66,7 +66,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }
                 yield deleteModer(interaction.channel, target);
                 yield interaction.editReply({ embeds: [(0, embeds_2.getNotifyEmbed)(`Пользователь ${target} уволен. Он не больше не сможет модерировать вашу комнату`)] });
-                config_1.config[interaction.channelId] = false;
+                config_1.config[interaction.channelId].btnDelay = false;
                 yield (0, utills_1.memberSendToAudit)(member, `снял с модерки ${target}`, interaction.channelId);
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
@@ -80,7 +80,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }), 3000);
             }
             else {
-                config_1.config[interaction.channelId] = false;
+                config_1.config[interaction.channelId].btnDelay = false;
                 yield interaction.editReply({ embeds: [(0, embeds_2.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
@@ -88,7 +88,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             }
         }
         catch (error) {
-            config_1.config[interaction.channelId] = false;
+            config_1.config[interaction.channelId].btnDelay = false;
             yield interaction.editReply({ embeds: [(0, embeds_2.getErrEmbed)("Произошла ошибка. Попробуйте еще раз.")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();

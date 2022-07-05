@@ -1,4 +1,8 @@
+interface IRoom {
+    btnDelay: boolean,
+    lifeTimer: NodeJS.Timer | null
 
-export interface IRoomConfig{
-    [id:string]: boolean
+}
+export interface IRoomsConfig{
+    [id:string]: IRoom
 }

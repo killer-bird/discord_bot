@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { IUser } from "../../interfaces/IUser"
+import { IUserModel } from "../../interfaces/IUserModel"
 import { IRoom } from "../../interfaces/IRoom"
 
 // const RoomSchema = new Schema<IRoom>({
@@ -11,7 +11,7 @@ import { IRoom } from "../../interfaces/IRoom"
 // }) 
 
 
-const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema<IUserModel>({
     id:String,
     currency:Number,
     roles: [String],
@@ -24,4 +24,4 @@ const UserSchema = new Schema<IUser>({
 
 
 
-export const User =  model<IUser>("User", UserSchema)
+export const User =  model<IUserModel>("User", UserSchema)

@@ -22,7 +22,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: interaction.channelId}) as IRoom
     
-    if(config[interaction.channelId as string]) {
+    if(config[interaction.channelId as string].btnDelay) {
         await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
         setTimeout( async () => {
             await interaction.deleteReply()
@@ -30,7 +30,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
         return
     }
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
-        config[interaction.channelId as string] = true
+        config[interaction.channelId as string].btnDelay = true
         await interaction.reply({embeds:[getAwaitMsgEmbed("забанить пользователя в комнате линканите его ниже")]})
 
         try {
@@ -49,7 +49,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                 const target = members.first() as GuildMember
                 
                 if( checkAdmPerms(target.user, room) || !checkAdmPerms(interaction.user, room) && checkModPerms(target.user, room) ) {
-                    config[member.voice.channelId as string] = false
+                    config[member.voice.channelId as string].btnDelay = false
                     await getNotPermsErr(interaction)
                     return
                 }
@@ -59,7 +59,7 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                     console.log(error);
                 }
                 await interaction.editReply({embeds: [getNotifyEmbed(`У пользователя ${target} был забран доступ в комнату. Теперь он  больше не сможет зайти в вашу комнату`)]})           
-                config[interaction.channelId as string] = false
+                config[interaction.channelId as string].btnDelay = false
                 await memberSendToAudit(member, `забанил ${target}`, interaction.channelId)
                 setTimeout(async() => {
                     try {
@@ -71,20 +71,20 @@ export const execute = async (interaction: ButtonInteraction): Promise<void>=> {
                 }, 3000);
             } else {
                 await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
-                config[interaction.channelId as string] = false
+                config[interaction.channelId as string].btnDelay = false
                 setTimeout(async() => {
                     await interaction.deleteReply() 
                 }, 3000);
             }
 
         } catch (error) {
-            config[interaction.channelId as string] = false
+            config[interaction.channelId as string].btnDelay = false
             return
         }
 
     } else {
         await getNotPermsErr(interaction)
-        config[interaction.channelId as string] = false
+        config[interaction.channelId as string].btnDelay = false
     }
 
 }

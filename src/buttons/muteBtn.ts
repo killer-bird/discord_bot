@@ -19,7 +19,7 @@ export const execute = async (interaction: ButtonInteraction) => {
     const member = interaction.member as GuildMember
     const room = await Room.findOne({id: interaction.channelId}) as IRoom
 
-    if(config[interaction.channelId as string]) {
+    if(config[interaction.channelId as string].btnDelay) {
         await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
         setTimeout( async () => {
             await interaction.deleteReply()
@@ -29,7 +29,7 @@ export const execute = async (interaction: ButtonInteraction) => {
 
     if( checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         
-        config[interaction.channelId as string] = true
+        config[interaction.channelId as string].btnDelay = true
 
         await interaction.reply({embeds:[getAwaitMsgEmbed("Укажите пользователя, которому необходимо выключить микрофон")]})       
     
@@ -54,7 +54,7 @@ export const execute = async (interaction: ButtonInteraction) => {
                 }
                 await muteUser(interaction.channel as VoiceChannel, target)
                 await interaction.editReply({embeds: [getNotifyEmbed(`Пользователь ${target} получил мут. Он не больше не сможет разговаривать в вашей комнате`)]})           
-                config[interaction.channelId as string] = false
+                config[interaction.channelId as string].btnDelay = false
                 await memberSendToAudit(member, `замутил ${target}`, interaction.channelId)
                 setTimeout(async() => {
                     try {
@@ -67,7 +67,7 @@ export const execute = async (interaction: ButtonInteraction) => {
                 
             } else {
                 await interaction.editReply({embeds:[getErrEmbed("Вы не успели дать ответ в указанное время. Попробуйте еще раз")]})
-                config[interaction.channelId as string] = false
+                config[interaction.channelId as string].btnDelay = false
                 setTimeout(async() => {
                     await interaction.deleteReply() 
                 }, 3000);
@@ -77,7 +77,7 @@ export const execute = async (interaction: ButtonInteraction) => {
             setTimeout( async () => {
                 await interaction.deleteReply()
             }, 5000);
-            config[interaction.channelId as string] = false
+            config[interaction.channelId as string].btnDelay = false
             return
         }
     }else {

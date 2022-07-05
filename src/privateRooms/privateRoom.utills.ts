@@ -1,4 +1,4 @@
-import { Guild, CategoryChannel, User, VoiceChannel, TextChannel, Permissions, GuildMember } from "discord.js"
+import { Guild, CategoryChannel, User, VoiceChannel, TextChannel, Permissions, GuildMember, Role } from "discord.js"
 import { IRoom } from "../interfaces/IRoom"
 import { UserLimit } from "../types/UserLimit"
 import { Room } from "../database/models/RoomModel"
@@ -9,7 +9,7 @@ import { createRoomSettingsMsg } from "../utills"
 export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel> => {
     const room = await Room.findOne({owner: user.id}) as IRoom
     const parent = await guild.channels.fetch(process.env.PARENT_CATEGORY as string) as CategoryChannel
-    console.log("CREATE ROOM INTO FUNC", room.limit)
+    const defaultRole = await guild.roles.fetch(process.env.DEFAULT_ROLE as string) as Role
     const voice =  await guild.channels.create(room.name, {
         type: 'GUILD_VOICE',
         parent,
@@ -79,23 +79,29 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel>
                     Permissions.FLAGS.READ_MESSAGE_HISTORY,
                 ]
             },
+            {
+                id: defaultRole,
+                allow: [Permissions.FLAGS.READ_MESSAGE_HISTORY]
+            }
 
         ],
-    })
+    }) as VoiceChannel
 
     const textChannel = await guild.channels.fetch(voice.id) as TextChannel
     await createRoomSettingsMsg(textChannel)
     await Room.updateOne({owner: user.id}, {id: voice.id})
-    config[voice.id] = false
+    
+    config[voice.id] = {
+        btnDelay: false,
+        lifeTimer: null
+    }
     return voice
 }
 
 export const deleteRoom = async (voice: VoiceChannel) :Promise<void> => {
     try {
-        if (!voice.members.filter(member => !member.user.bot).size) {
-            delete config[voice.id]
-            await voice.delete()
-        }     
+        delete config[voice.id]
+        await voice.delete()
     } catch (error) {
         return
     }

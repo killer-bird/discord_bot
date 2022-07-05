@@ -22,7 +22,7 @@ exports.unbanBtn = new discord_js_1.MessageButton()
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const member = interaction.member;
-    if (privateRooms_1.config[interaction.channelId]) {
+    if (privateRooms_1.config[interaction.channelId].btnDelay) {
         yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
@@ -31,7 +31,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     }
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
     if ((0, privateRooms_1.checkAdmPerms)(interaction.user, room) || (0, privateRooms_1.checkModPerms)(interaction.user, room)) {
-        privateRooms_1.config[interaction.channelId] = true;
+        privateRooms_1.config[interaction.channelId].btnDelay = true;
         yield interaction.reply({ embeds: [(0, embeds_1.getAwaitMsgEmbed)("разбанить пользователя в комнате линканите его ниже")] });
         try {
             const filter = (m) => {
@@ -50,7 +50,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }
                 yield (0, privateRooms_1.unBanUser)(interaction.channel, target);
                 yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Пользователь ${target} получил доступ в комнату. Теперь он сможет зайти в вашу комнату`)] });
-                privateRooms_1.config[interaction.channelId] = false;
+                privateRooms_1.config[interaction.channelId].btnDelay = false;
                 yield (0, utills_1.memberSendToAudit)(member, `разбанил ${target}`, interaction.channelId);
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
@@ -64,7 +64,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }), 5000);
             }
             else {
-                privateRooms_1.config[interaction.channelId] = false;
+                privateRooms_1.config[interaction.channelId].btnDelay = false;
                 yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
@@ -72,7 +72,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             }
         }
         catch (error) {
-            privateRooms_1.config[interaction.channelId] = false;
+            privateRooms_1.config[interaction.channelId].btnDelay = false;
             yield (0, privateRooms_1.getNotPermsErr)(interaction);
             return;
         }

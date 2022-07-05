@@ -3,6 +3,8 @@ import { createRoom, deleteRoom } from "../privateRooms/privateRoom.utills";
 import { Room } from "../database/models/RoomModel"
 import { IEvent } from "../interfaces"
 import { muteHandler, banHandler } from "../privateRooms"
+import { config } from "../privateRooms"
+import { onlineTimer } from "../onlineTimer"
 
 
 const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) => {
@@ -11,7 +13,30 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
     const isRoomExists = await Room.findOne({id: oldState.channelId})
     const room = await Room.findOne({owner: member.user.id})
 
+    
+    
+    if(!newState.mute && newState.channel) {
+        // timer.timeout(member.user.id)
+        
+        console.log("to room")
+        
+    } else{
+        // timer.clear(member.user.id)
+        console.log("out of room");
+        
+    }
+    
+
+
+
     if( room?.id ){
+        if(config[newState.channelId as string]){
+            if(config[newState.channelId as string].lifeTimer){
+                clearTimeout(config[newState.channelId as string].lifeTimer as NodeJS.Timer)
+                config[newState.channelId as string].lifeTimer = null
+            }
+        }
+
         try {
             const voice  = await oldState.guild.channels.fetch(room.id) as VoiceChannel
             if(newState.channelId === process.env.CREATE_ROOM) {
@@ -30,8 +55,9 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
             if( newState.channelId !== isRoomExists.id){
                 try {
                     if (!voice.members.filter(member => !member.user.bot).size) {
-                        
-                        await deleteRoom(voice)
+                        config[voice.id].lifeTimer = setTimeout( async () =>{
+                            await deleteRoom(voice)
+                        },5000)
                     }   
                 } catch (error) {
                 }
@@ -71,6 +97,8 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
         }
         
     }
+    
+    
     
 }
 

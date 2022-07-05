@@ -24,7 +24,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a, _b;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
-    if (privateRooms_1.config[interaction.channelId]) {
+    if (privateRooms_1.config[interaction.channelId].btnDelay) {
         yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             yield interaction.deleteReply();
@@ -32,7 +32,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         return;
     }
     if ((0, privateRooms_1.checkAdmPerms)(interaction.user, room) || (0, privateRooms_1.checkModPerms)(interaction.user, room)) {
-        privateRooms_1.config[interaction.channelId] = true;
+        privateRooms_1.config[interaction.channelId].btnDelay = true;
         yield interaction.reply({ embeds: [(0, embeds_2.getAwaitMsgEmbed)("размьютить пользователя, ")] });
         const filter = (m) => {
             if (m.mentions.users.first()) {
@@ -51,7 +51,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 }
                 yield (0, privateRooms_1.unMuteUser)(interaction.channel, target);
                 interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы размутили ${target}.Теперь он снова сможет говорить в вашей комнате`)] });
-                privateRooms_1.config[interaction.channelId] = false;
+                privateRooms_1.config[interaction.channelId].btnDelay = false;
                 yield (0, utills_1.memberSendToAudit)(member, `размутил ${target}`, interaction.channelId);
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     var _c;
@@ -66,7 +66,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             }
             else {
                 yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
-                privateRooms_1.config[interaction.channelId] = false;
+                privateRooms_1.config[interaction.channelId].btnDelay = false;
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
                 }), 3000);
@@ -75,7 +75,7 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
         catch (error) {
             console.log(error);
             yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Произошла ошибка. Попробуйте еще раз")] });
-            privateRooms_1.config[interaction.channelId] = false;
+            privateRooms_1.config[interaction.channelId].btnDelay = false;
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
             }), 5000);

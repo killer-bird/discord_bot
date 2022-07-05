@@ -1,10 +1,10 @@
 import { GuildMember } from "discord.js"
-import { IUser } from "../interfaces/IUser"
+import { IUserModel } from "../interfaces/IUserModel"
 import { User } from "../database/models/UserModel"
 import { getRolesArray } from "../utills/getRolesArray"
 
 export const createUser = async (member: GuildMember) => {
-    const userObject :IUser = {
+    const userObject :IUserModel = {
         id: member.user.id,
         roles: getRolesArray(member),
         currency: 0, 
