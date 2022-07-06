@@ -1,5 +1,7 @@
+import { users } from '../users'
+
 interface ITimerConfig  {
-    [id:string]: NodeJS.Timer
+    [id:string]: NodeJS.Timer 
 }
 interface IDelays {
     [id:string]: number
@@ -9,26 +11,28 @@ export function onlineTimer(callback: Function, delay: number) {
 
     const timeoutId = {} as ITimerConfig
     const intervalId = {} as ITimerConfig
-    const delays = {} as IDelays
     
 
-    function timeout(id:string) {
-        delays[id] = delay
-        
-        timeoutId[id] =setTimeout(() => {
-            callback()
-            clearInterval(intervalId[id])
-            timeout(id)
-        }, delays[id]*1000);
+    async function timeout(id:string, ...args: any[]) {
+                
+        if(!users[id].timeLeftToReward){
+            users[id].timeLeftToReward = delay
+        }
+        timeoutId[id] =setTimeout( async () => {
+            await callback(...args) 
+            clearInterval(intervalId[id] as NodeJS.Timer)
+            users[id].timeLeftToReward = delay
+            timeout(id, ...args)
+        }, users[id].timeLeftToReward as number *1000);
+
         interval(id)
     }
 
 
     function interval(id:string) {
-        console.log(id)
         intervalId[id]  = setInterval(() => {       
-            delays[id]--
-            console.log(delays[id])
+            (users[id]!.timeLeftToReward as number)--
+            // console.log(users[id]!.timeLeftToReward)
         }, 1000)
     }
 

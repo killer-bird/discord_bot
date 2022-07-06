@@ -14,6 +14,7 @@ const v9_1 = require("discord-api-types/v9");
 const UserModel_1 = require("../database/models/UserModel");
 const RoomModel_1 = require("../database/models/RoomModel");
 const utills_1 = require("../utills/");
+const users_1 = require("../users");
 const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
     const guild = client.guilds.cache.get(process.env.GUILD_ID);
     const members = yield (guild === null || guild === void 0 ? void 0 : guild.members.fetch());
@@ -27,6 +28,10 @@ const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
         if (!member.user.bot && !(yield RoomModel_1.Room.exists({ owner: member.user.id }))) {
             yield (0, utills_1.newRoom)(member);
         }
+        users_1.users[member.user.id] = {
+            timeLeftToGift: null,
+            timeLeftToReward: null
+        };
     }));
     console.log("on ready!");
 });

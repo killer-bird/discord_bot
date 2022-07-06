@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.incOrDecrCurrency = void 0;
 const UserModel_1 = require("../database/models/UserModel");
 const incOrDecrCurrency = (target, count) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(target.id, count);
     yield UserModel_1.User.updateOne({ id: target.id }, { $inc: { currency: count } });
 });
 exports.incOrDecrCurrency = incOrDecrCurrency;

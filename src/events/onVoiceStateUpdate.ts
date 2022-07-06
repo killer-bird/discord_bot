@@ -1,27 +1,35 @@
-import { VoiceState, GuildMember, VoiceChannel } from "discord.js";
+import { VoiceState, GuildMember, VoiceChannel, User } from "discord.js";
 import { createRoom, deleteRoom } from "../privateRooms/privateRoom.utills";
 import { Room } from "../database/models/RoomModel"
 import { IEvent } from "../interfaces"
 import { muteHandler, banHandler } from "../privateRooms"
 import { config } from "../privateRooms"
 import { onlineTimer } from "../onlineTimer"
+import {incOrDecrCurrency } from "../utills";
 
+type argsType = [User, number]
+
+const timer = onlineTimer(
+    async(...args : argsType) => {
+        incOrDecrCurrency(...args)
+    }, 3600
+)
 
 const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) => {
     
     const member = newState.member as GuildMember    
     const isRoomExists = await Room.findOne({id: oldState.channelId})
     const room = await Room.findOne({owner: member.user.id})
+    
 
-    
-    
     if(!newState.mute && newState.channel) {
-        // timer.timeout(member.user.id)
+        await timer.timeout(member.user.id, member.user, 20)
+    
         
         console.log("to room")
         
     } else{
-        // timer.clear(member.user.id)
+        timer.clear(member.user.id)
         console.log("out of room");
         
     }

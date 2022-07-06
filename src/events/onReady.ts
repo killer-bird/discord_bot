@@ -4,8 +4,8 @@ import ExtendedClient from "../Client"
 import { IEvent } from "../interfaces/IEvents"
 import { User } from "../database/models/UserModel"
 import { Room } from "../database/models/RoomModel"
-import { createUser, newRoom, createRoomSettingsMsg } from "../utills/"
-
+import { createUser, newRoom } from "../utills/"
+import { users } from "../users"
 
 const onReady = async (client: ExtendedClient) => {
     
@@ -24,6 +24,10 @@ const onReady = async (client: ExtendedClient) => {
         }
         if(!member.user.bot && !await Room.exists({owner: member.user.id})) {
             await newRoom(member)   
+        }
+        users[member.user.id] = {
+            timeLeftToGift: null,
+            timeLeftToReward: null
         }
     }) 
     console.log("on ready!")

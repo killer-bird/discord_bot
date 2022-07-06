@@ -20,13 +20,6 @@ const createUser = (member) => __awaiter(void 0, void 0, void 0, function* () {
         ban: false,
         mute: false,
         gender: 1,
-        // room: {
-        //     name: member.user.username,
-        //     mutes: [],
-        //     bans: [],
-        //     moderators: [],
-        //     limit: undefined
-        // }
     };
     yield new UserModel_1.User(userObject).save();
 });

@@ -11,13 +11,6 @@ export const createUser = async (member: GuildMember) => {
         ban: false,
         mute: false,
         gender: 1,
-        // room: {
-        //     name: member.user.username,
-        //     mutes: [],
-        //     bans: [],
-        //     moderators: [],
-        //     limit: undefined
-        // }
     } 
     
     await new User(userObject).save()

@@ -1,5 +1,5 @@
 interface IUser {
-    timeLeftToReward: number;
+    timeLeftToReward: number | null;
     timeLeftToGift: Date | null;
 }
 
