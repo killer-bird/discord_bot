@@ -20,11 +20,12 @@ exports.lockBtn = new discord_js_1.MessageButton()
     .setEmoji('988485871248494662')
     .setStyle("SECONDARY");
 const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room) || (0, checkPerms_1.checkModPerms)(interaction.user, room)) {
         (_a = member.voice.channel) === null || _a === void 0 ? void 0 : _a.permissionOverwrites.create(member.voice.channel.guild.roles.everyone, { "CONNECT": false });
+        (_b = member.voice.channel) === null || _b === void 0 ? void 0 : _b.permissionOverwrites.create(member.user, { "CONNECT": true });
         yield interaction.reply({ embeds: [(0, embeds_1.getNotifyEmbed)("Вы закрыли комнату. Никто не сможет к вам зайти")] });
         yield (0, utills_1.memberSendToAudit)(member, `закрыл`, interaction.channelId);
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {

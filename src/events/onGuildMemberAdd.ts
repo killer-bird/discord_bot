@@ -3,12 +3,17 @@ import { User } from "../database/models/UserModel"
 import { createUser } from "../utills/createUser"
 import { newRoom } from "../utills/newRoom"
 import { IEvent } from "../interfaces/IEvents"
-
+import { users } from "../users"
 
 
 const onGuildMemberAdd = async (member: GuildMember) => {
 
     const oldUser = await User.findOne({id: member.user.id})
+    users[member.user.id] = {
+        voiceOnline: null,
+        timeLeftToReward: null
+    }
+    
     if( oldUser ) {
         console.log( member.user, "exist!!")
         setTimeout( async() => {
@@ -24,6 +29,7 @@ const onGuildMemberAdd = async (member: GuildMember) => {
         }, 100000);       
     } else {
         console.log("NEW USER ADDED")
+        
         const defaultRole = await member.guild.roles.fetch(process.env.DEFAULT_ROLE as string)
         setTimeout( async () => {
             try {
@@ -35,8 +41,12 @@ const onGuildMemberAdd = async (member: GuildMember) => {
         }, 100000)
         await createUser(member)
         await newRoom(member)
+
+        
     }
 }
+
+
 
 export default {
     name: 'guildMemberAdd',

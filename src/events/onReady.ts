@@ -5,6 +5,7 @@ import { IEvent } from "../interfaces/IEvents"
 import { User } from "../database/models/UserModel"
 import { Room } from "../database/models/RoomModel"
 import { createUser, newRoom } from "../utills/"
+import { config as rooms} from "../privateRooms"
 import { users } from "../users"
 
 const onReady = async (client: ExtendedClient) => {
@@ -25,11 +26,20 @@ const onReady = async (client: ExtendedClient) => {
         if(!member.user.bot && !await Room.exists({owner: member.user.id})) {
             await newRoom(member)   
         }
+        
         users[member.user.id] = {
-            timeLeftToGift: null,
+            voiceOnline: null,
             timeLeftToReward: null
         }
     }) 
+    const existedRooms = await Room.where("id").ne(null)
+    existedRooms.forEach(room => {
+        rooms[room.id] = {
+            btnDelay: false,
+            lifeTimer:  null
+        } 
+    })
+    
     console.log("on ready!")
 }
 

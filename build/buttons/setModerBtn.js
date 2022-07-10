@@ -15,7 +15,6 @@ const RoomModel_1 = require("../database/models/RoomModel");
 const embeds_1 = require("../embeds");
 const checkPerms_1 = require("../privateRooms/checkPerms");
 const embeds_2 = require("../embeds");
-const config_1 = require("../privateRooms/config");
 const getNotPermsErr_1 = require("../privateRooms/getNotPermsErr");
 const utills_1 = require("../utills");
 const setModer = (room, target) => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,15 +28,15 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
     var _a, _b;
     const member = interaction.member;
     const room = yield RoomModel_1.Room.findOne({ id: interaction.channelId });
-    if (config_1.config[interaction.channelId].btnDelay) {
-        yield interaction.reply({ embeds: [(0, embeds_1.getErrEmbed)("Закончите предыдущее действие")] });
-        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-            yield interaction.deleteReply();
-        }), 3000);
-        return;
-    }
+    // if(config[interaction.channelId as string].btnDelay) {
+    //     await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
+    //     setTimeout( async () => {
+    //         await interaction.deleteReply()
+    //     }, 3000);
+    //     return
+    // }
     if ((0, checkPerms_1.checkAdmPerms)(interaction.user, room)) {
-        config_1.config[interaction.channelId].btnDelay = true;
+        // config[interaction.channelId as string].btnDelay = true
         yield interaction.reply({ embeds: [(0, embeds_2.getAwaitMsgEmbed)("назначить пользователя модератором в комнате линканите его ниже")] });
         const filter = (m) => {
             if (m.mentions.users.first()) {
@@ -53,13 +52,13 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
                 yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)(`Пользователь ${target} уже модератор!`)] });
                 setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                     yield interaction.deleteReply();
-                    config_1.config[interaction.channelId].btnDelay = false;
+                    // config[interaction.channelId as string].btnDelay = false
                 }), 3000);
                 return;
             }
             yield setModer(interaction.channel, target);
             yield interaction.editReply({ embeds: [(0, embeds_1.getNotifyEmbed)(`Вы назначили ${target} модератором комнаты.`)] });
-            config_1.config[interaction.channelId].btnDelay = false;
+            // config[interaction.channelId as string].btnDelay = false
             yield (0, utills_1.memberSendToAudit)(member, `сделал модером ${target}`, interaction.channelId);
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 var _c;
@@ -76,14 +75,14 @@ const execute = (interaction) => __awaiter(void 0, void 0, void 0, function* () 
             yield interaction.editReply({ embeds: [(0, embeds_1.getErrEmbed)("Вы не успели дать ответ в указанное время. Попробуйте еще раз")] });
             setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
                 yield interaction.deleteReply();
-                config_1.config[interaction.channelId].btnDelay = false;
+                // config[interaction.channelId as string].btnDelay = false
             }), 3000);
-            config_1.config[interaction.channelId].btnDelay = false;
+            // config[interaction.channelId as string].btnDelay = false
         }
     }
     else {
         yield (0, getNotPermsErr_1.getNotPermsErr)(interaction);
-        config_1.config[member.voice.channelId].btnDelay = false;
+        // config[member.voice.channelId as string].btnDelay = false
     }
 });
 exports.execute = execute;

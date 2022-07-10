@@ -11,14 +11,14 @@ const data = new SlashCommandBuilder()
 
 
 const execute = async (interaction: CommandInteraction) => {
-    if(!users[interaction.user.id]?.timeLeftToGift) {
+    if(!users[interaction.user.id]?.voiceOnline) {
         const date = new Date()
         date.setDate(date.getDate() + 1)
-        users[interaction.user.id].timeLeftToGift = date 
+        users[interaction.user.id].voiceOnline = date 
         
         await incOrDecrCurrency(interaction.user, 100)
         setTimeout(() => {
-            users[interaction.user.id].timeLeftToGift = null
+            users[interaction.user.id].voiceOnline = null
         }, 86400000);
         // users[interaction.user.id as string].timeLeftToGift = new Date(date.setDate(date.getDate()+1))
         // console.log(users[interaction.user.id as string].timeLeftToGift)
@@ -38,7 +38,7 @@ const execute = async (interaction: CommandInteraction) => {
         return
     }
     const date = new Date()
-    const difference = 24 - (date.getHours() - users[interaction.user.id]?.timeLeftToGift!.getHours())
+    const difference = 24 - (date.getHours() - users[interaction.user.id]?.voiceOnline!.getHours())
     await interaction.reply({embeds: [getErrEmbed(`${interaction.member}, пока вы не можете получить слёзки! Осталось ${difference} часа`)]})
     setTimeout(() => {
         interaction.deleteReply()

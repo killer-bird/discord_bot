@@ -14,7 +14,6 @@ export const visibleBtn = new MessageButton()
     .setStyle('SECONDARY')
 
 
-
 export const execute = async ( interaction: ButtonInteraction): Promise<void> => {
 
     const member = interaction.member as GuildMember

@@ -6,6 +6,7 @@ import { muteHandler, banHandler } from "../privateRooms"
 import { config } from "../privateRooms"
 import { onlineTimer } from "../onlineTimer"
 import {incOrDecrCurrency } from "../utills";
+import { users } from "../users"
 
 type argsType = [User, number]
 
@@ -23,13 +24,21 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
     
 
     if(!newState.mute && newState.channel) {
-        await timer.timeout(member.user.id, member.user, 20)
-    
+        // await timer.timeout(member.user.id, member.user, 20)
+        const date = new Date()
+        // date.setMinutes(date.getMinutes() + 1)
+        users[member.id].voiceOnline = date
         
         console.log("to room")
-        
+    
     } else{
-        timer.clear(member.user.id)
+        // timer.clear(member.user.id)
+        if(users[member.id]?.voiceOnline) {
+            const date = new Date()
+            const difference = new Date - users[member.id].voiceOnline
+            console.log(Math.floor(difference / 60000), difference % 60000 / 1000, difference)
+        }
+        
         console.log("out of room");
         
     }
@@ -79,9 +88,10 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
     if( oldState.channelId !== process.env.CREATE_ROOM && newState.channelId === process.env.CREATE_ROOM ) {            
         console.log("CREATE ROOM INTO EVENT")
         const voice =  await createRoom(member.user, newState.guild)
-        await newState.member?.voice.setChannel(voice)
-        await Room.updateOne({owner: member.user.id}, {id: voice.id})          
-            
+        if(voice) {
+            await newState.member?.voice.setChannel(voice)
+            await Room.updateOne({owner: member.user.id}, {id: voice.id}) 
+        }
     }
     
     // MUTES AND BANES IN PRIVATE ROOMS

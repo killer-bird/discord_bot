@@ -31,6 +31,7 @@ export const execute = async ( interaction: ButtonInteraction): Promise<void> =>
         }
 
         member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"VIEW_CHANNEL": false})
+        member.voice.channel?.permissionOverwrites.create( member.user, {"VIEW_CHANNEL": true})
         await interaction.reply({embeds: [getNotifyEmbed("Вы сделали комнату невидимой. Теперь её не все видят.")]})
         await memberSendToAudit(member, `cделал невидимой`, interaction.channelId)
         setTimeout( async () => {

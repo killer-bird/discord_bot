@@ -1,6 +1,7 @@
 import { CommandInteraction } from "discord.js"
 import ExtendedClient from "../Client"
 import { IEvent, ICommand, IButton, IModal } from "../interfaces"
+import { getErrEmbed, getNotifyEmbed } from "../embeds"
 import {config} from "../privateRooms"
 
 const onInteractionCreate = async (interaction: CommandInteraction) => {
@@ -23,8 +24,19 @@ const onInteractionCreate = async (interaction: CommandInteraction) => {
     if(interaction.isButton()){
         const customId = interaction.customId
         const button = client.buttons.get(customId) as IButton
+        if(config[interaction.channelId as string].btnDelay) {
+            await interaction.reply({embeds: [getErrEmbed("Закончите предыдущее действие")]})
+            setTimeout( async () => {
+                await interaction.deleteReply()
+            }, 3000);
+            return
+        }
         try {
+            console.log("started")
+            config[interaction.channelId as string].btnDelay = true
             await button.execute(interaction)
+            config[interaction.channelId as string].btnDelay = false
+            console.log("ended")
         } catch (error) {
             console.log(error)
             config[interaction.channelId as string].btnDelay = false

@@ -14,6 +14,7 @@ const v9_1 = require("discord-api-types/v9");
 const UserModel_1 = require("../database/models/UserModel");
 const RoomModel_1 = require("../database/models/RoomModel");
 const utills_1 = require("../utills/");
+const privateRooms_1 = require("../privateRooms");
 const users_1 = require("../users");
 const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
     const guild = client.guilds.cache.get(process.env.GUILD_ID);
@@ -29,10 +30,17 @@ const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
             yield (0, utills_1.newRoom)(member);
         }
         users_1.users[member.user.id] = {
-            timeLeftToGift: null,
+            voiceOnline: null,
             timeLeftToReward: null
         };
     }));
+    const existedRooms = yield RoomModel_1.Room.where("id").ne(null);
+    existedRooms.forEach(room => {
+        privateRooms_1.config[room.id] = {
+            btnDelay: false,
+            lifeTimer: null
+        };
+    });
     console.log("on ready!");
 });
 exports.default = {

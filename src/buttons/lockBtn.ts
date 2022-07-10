@@ -17,6 +17,7 @@ export const execute = async(interaction: ButtonInteraction): Promise<void> => {
 
     if(checkAdmPerms(interaction.user, room) || checkModPerms(interaction.user, room) ) {
         member.voice.channel?.permissionOverwrites.create( member.voice.channel.guild.roles.everyone, {"CONNECT": false})
+        member.voice.channel?.permissionOverwrites.create( member.user, {"CONNECT": true})
         await interaction.reply({embeds: [getNotifyEmbed("Вы закрыли комнату. Никто не сможет к вам зайти")]})
         await memberSendToAudit(member, `закрыл`, interaction.channelId)
         setTimeout( async () => {
