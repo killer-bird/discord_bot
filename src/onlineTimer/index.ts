@@ -15,15 +15,15 @@ export function onlineTimer(callback: Function, delay: number) {
 
     async function timeout(id:string, ...args: any[]) {
                 
-        if(!users[id].timeLeftToReward){
-            users[id].timeLeftToReward = delay
+        if(!users[id].timeLeftToGift){
+            users[id].timeLeftToGift = delay
         }
         timeoutId[id] =setTimeout( async () => {
             await callback(...args) 
             clearInterval(intervalId[id] as NodeJS.Timer)
-            users[id].timeLeftToReward = delay
+            users[id].timeLeftToGift = delay
             timeout(id, ...args)
-        }, users[id].timeLeftToReward as number *1000);
+        }, users[id].timeLeftToGift as number *1000);
 
         interval(id)
     }
@@ -31,7 +31,7 @@ export function onlineTimer(callback: Function, delay: number) {
 
     function interval(id:string) {
         intervalId[id]  = setInterval(() => {       
-            (users[id]!.timeLeftToReward as number)--
+            (users[id]!.timeLeftToGift as number)--
             // console.log(users[id]!.timeLeftToReward)
         }, 1000)
     }

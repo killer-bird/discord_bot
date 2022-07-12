@@ -30,8 +30,11 @@ const onReady = (client) => __awaiter(void 0, void 0, void 0, function* () {
             yield (0, utills_1.newRoom)(member);
         }
         users_1.users[member.user.id] = {
-            voiceOnline: null,
-            timeLeftToReward: null
+            timeLeftToGift: 0,
+            voiceOnline: {
+                entryTime: null,
+                timeLeftToReward: 0
+            }
         };
     }));
     const existedRooms = yield RoomModel_1.Room.where("id").ne(null);

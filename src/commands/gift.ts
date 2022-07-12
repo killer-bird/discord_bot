@@ -11,25 +11,12 @@ const data = new SlashCommandBuilder()
 
 
 const execute = async (interaction: CommandInteraction) => {
-    if(!users[interaction.user.id]?.voiceOnline) {
-        const date = new Date()
-        date.setDate(date.getDate() + 1)
-        users[interaction.user.id].voiceOnline = date 
-        
+    const date = new Date()
+    const lastGiftDate = users[interaction.user.id]?.timeLeftToGift as Date
+
+    if(+date - +lastGiftDate  >= 24 * 60 * 60 * 1000) {
+        users[interaction.user.id].timeLeftToGift = new Date()
         await incOrDecrCurrency(interaction.user, 100)
-        setTimeout(() => {
-            users[interaction.user.id].voiceOnline = null
-        }, 86400000);
-        // users[interaction.user.id as string].timeLeftToGift = new Date(date.setDate(date.getDate()+1))
-        // console.log(users[interaction.user.id as string].timeLeftToGift)
-        // const interval = setInterval(() => {
-        //     delay--
-        // }, 1000)
-        // setTimeout(() => {
-        //     users[interaction.user.id as string].timeLeftToGift = null
-        //     clearInterval(interval)
-        // }, delay * 1000)
-    
         await interaction.deferReply()
         await interaction.editReply({embeds: [getNotifyEmbed(`${interaction.member}, вы получили 100 слёзок 💧`)]})
         setTimeout(() => {
@@ -37,14 +24,11 @@ const execute = async (interaction: CommandInteraction) => {
         }, 3000);
         return
     }
-    const date = new Date()
-    const difference = 24 - (date.getHours() - users[interaction.user.id]?.voiceOnline!.getHours())
-    await interaction.reply({embeds: [getErrEmbed(`${interaction.member}, пока вы не можете получить слёзки! Осталось ${difference} часа`)]})
+    await interaction.reply({embeds: [getErrEmbed(`${interaction.member}, пока вы не можете получить слёзки!`)]})
     setTimeout(() => {
         interaction.deleteReply()
     }, 3000);
 }
-
 
 
 export default {

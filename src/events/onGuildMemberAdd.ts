@@ -8,17 +8,20 @@ import { users } from "../users"
 
 const onGuildMemberAdd = async (member: GuildMember) => {
 
-    const oldUser = await User.findOne({id: member.user.id})
+    const isOldUser = await User.findOne({id: member.user.id})
     users[member.user.id] = {
-        voiceOnline: null,
-        timeLeftToReward: null
+        timeLeftToGift: 0,
+        voiceOnline: {
+            entryTime: null,
+            timeLeftToReward: 0
+        }
     }
     
-    if( oldUser ) {
+    if( isOldUser ) {
         console.log( member.user, "exist!!")
         setTimeout( async() => {
             try {
-                for (const roleId of oldUser.roles) {
+                for (const roleId of isOldUser.roles) {
                     let role = await member.guild.roles.fetch(roleId)
                     await member.roles.add(role as RoleResolvable)
                 }

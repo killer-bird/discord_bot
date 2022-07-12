@@ -39,6 +39,7 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel 
                                 ]
                     }))
                 ),
+                
                 {
                     id: user,
                     allow: [
@@ -46,6 +47,8 @@ export const createRoom = async(user: User, guild: Guild): Promise<VoiceChannel 
                             Permissions.FLAGS.MUTE_MEMBERS, 
                             Permissions.FLAGS.DEAFEN_MEMBERS,
                             Permissions.FLAGS.MANAGE_ROLES,
+                            Permissions.FLAGS.VIEW_CHANNEL,
+                            Permissions.FLAGS.CONNECT
                             ]
                 },
                 room.closed ?

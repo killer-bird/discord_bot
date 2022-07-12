@@ -1,6 +1,11 @@
+interface IVoiceOnline {
+    entryTime: Date | null
+    timeLeftToReward: number 
+}
+
 interface IUser {
-    timeLeftToReward: number | null | Date;
-    voiceOnline: Date | null;
+    timeLeftToGift: number | null | Date;
+    voiceOnline: IVoiceOnline;
 }
 
 export interface IUsers {

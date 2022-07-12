@@ -24,28 +24,27 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
     
 
     if(!newState.mute && newState.channel) {
-        // await timer.timeout(member.user.id, member.user, 20)
-        const date = new Date()
-        // date.setMinutes(date.getMinutes() + 1)
-        users[member.id].voiceOnline = date
+        users[member.id].voiceOnline.entryTime = new Date()
         
         console.log("to room")
-    
     } else{
-        // timer.clear(member.user.id)
-        if(users[member.id]?.voiceOnline) {
-            const date = new Date()
-            const difference = new Date - users[member.id].voiceOnline
-            console.log(Math.floor(difference / 60000), difference % 60000 / 1000, difference)
+        if(users[member.id].voiceOnline.entryTime) {
+            const entryTime = users[member.id].voiceOnline.entryTime as Date
+            const duration = new Date().getTime() - entryTime.getTime() + users[member.id].voiceOnline.timeLeftToReward 
+            users[member.id].voiceOnline.timeLeftToReward = duration % 60000
+            const hours = Math.floor(duration / 360000)
+            users[member.id].voiceOnline.timeLeftToReward = Math.floor((duration / 60000) % 60)
+
+
+            if(hours >= 1) {
+                await incOrDecrCurrency(member.user, hours*20)
+            }
         }
         
         console.log("out of room");
         
     }
     
-
-
-
     if( room?.id ){
         if(config[newState.channelId as string]){
             if(config[newState.channelId as string].lifeTimer){
@@ -65,6 +64,7 @@ const onVoiceStateUpdate = async (oldState: VoiceState, newState: VoiceState) =>
             console.log(error);
         }
     }
+
 
     if(isRoomExists) {
         try {

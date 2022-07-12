@@ -28,8 +28,12 @@ const onReady = async (client: ExtendedClient) => {
         }
         
         users[member.user.id] = {
-            voiceOnline: null,
-            timeLeftToReward: null
+            timeLeftToGift: 0,
+            voiceOnline: {
+                entryTime: null,
+                timeLeftToReward: 0
+            }
+            
         }
     }) 
     const existedRooms = await Room.where("id").ne(null)
